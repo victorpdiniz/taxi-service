@@ -39,7 +39,7 @@ A clean and well-structured Go API base project that provides a solid foundation
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:Mlcarvalho1/golang-fiber-base.git
    cd golang-api-base
    ```
 
