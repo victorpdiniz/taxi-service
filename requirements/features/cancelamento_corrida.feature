@@ -5,7 +5,7 @@ Scenario: Motorista cancela corrida antes de chegar ao local
     Given o motorista de nome "João" aceitou uma corrida
     And o motorista está a "5" minutos do local de embarque "abc"
     When o motorista seleciona a opção "Cancelar"
-    And cancela a corrida
+    And seleciona "Confirmar" na interface de desencentivo a cancelamento
     Then o sistema cancela o progresso da corrida
     And o motorista recebe a mensagem de confirmação na tela "Corrida cancelada com sucesso"
 
