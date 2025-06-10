@@ -44,3 +44,5 @@ And o pop-up exibe os botões “Enviar avaliação” e  “pular”,
 And eu clico “pular”, 
 Then o pop-up é fechado.
 
+//Já havia adicionado os cenários anteriormente. Esse passo é apenas para o roteiro.
+//Mudança 2
