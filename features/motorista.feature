@@ -43,6 +43,8 @@ Then vejo um pop-up escrito “Como foi a sua corrida?”,
 And o pop-up exibe os botões “Enviar avaliação” e  “pular”,
 And eu clico “pular”, 
 Then o pop-up é fechado.
+Then teste teste teste teste ROTEIRO
 
 //Já havia adicionado os cenários anteriormente. Esse passo é apenas para o roteiro.
 //Mudança 2
+//Mudanca 3
