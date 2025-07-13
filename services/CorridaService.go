@@ -3,21 +3,20 @@ package services
 import (
 	"your-app/database"
 	"your-app/models"
-
 	"gorm.io/gorm"
 )
 
-func ListDummyUser() ([]models.DummyUser, error) {
-	var users []models.DummyUser
-	err := database.GetDB().Find(&users).Error
+func ListCorridas() ([]models.Corrida, error) {
+	var corridas []models.Corrida
+	err := database.GetDB().Find(&corridas).Error
 	if err != nil {
-		return []models.DummyUser{}, err
+		return []models.Corrida{}, err
 	}
 
-	return users, nil
+	return corridas, nil
 }
 
-func GetDummyUser(id int) (models.DummyUser, error) {
+func GetCorrida(id int) (models.Corrida, error) {
 	var user models.DummyUser
 	err := database.GetDB().First(&user, id).Error
 	if err != nil {
@@ -29,7 +28,7 @@ func GetDummyUser(id int) (models.DummyUser, error) {
 	return user, nil
 }
 
-func CreateDummyUser(user *models.DummyUser) error {
+func CreateCorrida(user *models.DummyUser) error {
 	err := database.GetDB().Create(user).Error
 
 	if err != nil {
@@ -39,7 +38,7 @@ func CreateDummyUser(user *models.DummyUser) error {
 	return nil
 }
 
-func UpdateDummyUser(id int, updateData *models.DummyUser) (models.DummyUser, error) {
+func UpdateCorrida(id int, updateData *models.DummyUser) (models.DummyUser, error) {
 	user, err := GetDummyUser(id)
 	if err != nil {
 		return models.DummyUser{}, err
@@ -68,7 +67,7 @@ func UpdateDummyUser(id int, updateData *models.DummyUser) (models.DummyUser, er
 	return updatedUser, nil
 }
 
-func DeleteDummyUser(id int) error {
+func DeleteCorrida(id int) error {
 	err := database.GetDB().Delete(&models.DummyUser{}, id).Error
 	if err != nil {
 		return err
