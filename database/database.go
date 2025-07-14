@@ -54,6 +54,8 @@ func GetDB() *gorm.DB {
 		log.Println("running migrations")
 
 		db.AutoMigrate(&models.DummyUser{})
+		// Adiciona a migration para Corrida
+		db.AutoMigrate(&models.Corrida{})
 		instance = db
 	})
 	return instance
