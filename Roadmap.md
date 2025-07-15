@@ -11,17 +11,17 @@ Dessa forma, o desenvolvimento é guiado pelos comportamentos esperados do siste
 
 ## 1. Configuração Inicial
 
-- [ ] Configurar estrutura base do backend (Go + Fiber)
-- [ ] Configurar Godog para BDD no backend
-- [ ] Configurar banco de dados PostgreSQL
+- [x] Configurar estrutura base do backend (Go + Fiber)
+- [x] Configurar Godog para BDD no backend
+- [x] Configurar banco de dados JSON
 - [ ] Inicializar projeto frontend (Svelte + TypeScript)
 - [ ] Configurar Cypress com cucumber-preprocessor
 - [ ] Definir estrutura de diretórios para ambos os projetos
 
 ## 2. Especificação de Comportamentos (Feature Files)
 
-- [ ] Definir cenários para autenticação do motorista
-- [ ] Definir cenários para gerenciamento de perfil do motorista
+- [x] Definir cenários para autenticação do motorista
+- [x] Definir cenários para gerenciamento de perfil do motorista
 - [ ] Definir cenários para o fluxo de corridas
 - [ ] Definir cenários para avaliações e histórico
 - [ ] Definir cenários para notificações
@@ -30,19 +30,19 @@ Dessa forma, o desenvolvimento é guiado pelos comportamentos esperados do siste
 ## 3. Backend - Desenvolvimento baseado em BDD
 
 ### Módulo de Autenticação
-- [ ] Escrever feature files em Gherkin (Godog)
-- [ ] Implementar testes unitários para autenticação
-- [ ] Desenvolver modelo e repositório de motorista
+- [x] Escrever feature files em Gherkin (Godog)
+- [x] Implementar testes unitários para autenticação
+- [x] Desenvolver modelo e repositório de motorista
 - [ ] Implementar serviço de autenticação (registro, login, recuperação)
 - [ ] Criar controladores e rotas de API
 - [ ] Implementar middleware de autenticação
 - [ ] Validar com testes E2E
 
 ### Módulo de Gerenciamento de Motoristas
-- [ ] Escrever feature files em Gherkin
-- [ ] Implementar testes unitários para validações
-- [ ] Desenvolver modelo completo de motorista
-- [ ] Implementar serviço de validação (idade, CPF, CNH)
+- [x] Escrever feature files em Gherkin
+- [x] Implementar testes unitários para validações
+- [x] Desenvolver modelo completo de motorista
+- [x] Implementar serviço de validação (idade, CPF, CNH)
 - [ ] Criar CRUD completo de motoristas
 - [ ] Desenvolver vinculação de veículo
 - [ ] Validar com testes E2E
