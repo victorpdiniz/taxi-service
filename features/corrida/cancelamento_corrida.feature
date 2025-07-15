@@ -1,5 +1,8 @@
+Feature: Cancelamento de Corrida
+    Como um sistema de taxi
+    Eu quero gerenciar o cancelamento de corridas
+    Para garantir o funcionamento adequado do serviço
 
-        
 Scenario: Motorista cancela corrida antes de chegar ao local
     
     Given o motorista de nome "João" aceitou uma corrida
