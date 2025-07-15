@@ -50,7 +50,7 @@ Funcionalidade: Gerenciamento de Perfil do Motorista
       | confirmacao   | NovaSenha@456  |
     E salvo a alteração
     Então vejo a mensagem "Senha alterada com sucesso"
-    E posso fazer login com a nova senha
+    E posso fazer login com a nova senha "NovaSenha@456"
 
   Esquema do Cenário: Validação na alteração de senha
     Dado que estou na página de alteração de senha
