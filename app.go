@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"your-app/routes"
+	"taxi_service/routes"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -30,6 +30,10 @@ _,,_,*^____      _____''*g*\"*,          Welcome to your app!
 
 func main() {
 	app := fiber.New()
+<<<<<<< HEAD
+=======
+	// Comentado pois estamos usando JSON ao invés de banco de dados
+>>>>>>> 51579e5 (feat: Troca BD por arquivo JSON e atualiza app de acordo)
 	// database.ConnectDb()
 
 	routes.SetupRoutes(app)
