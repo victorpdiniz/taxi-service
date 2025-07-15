@@ -37,7 +37,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^aceitei uma corrida que está em andamento$`, aceiteiUmaCorridaQueEstEmAndamento)
 	ctx.Step(`^acessei o link de recuperação válido$`, acesseiOLinkDeRecuperaoVlido)
 	ctx.Step(`^acesso a tela de histórico de corridas$`, acessoATelaDeHistricoDeCorridas)
-	ctx.Step(`^acesso histórico de corridas\n`, acessoHistricoDeCorridas)
+	ctx.Step(`^acesso histórico de corridas$`, acessoHistricoDeCorridas)
 	ctx.Step(`^acesso meu histórico de corridas$`, acessoMeuHistricoDeCorridas)
 	ctx.Step(`^acesso meu perfil$`, acessoMeuPerfil)
 	ctx.Step(`^acesso o link de recuperação expirado$`, acessoOLinkDeRecuperaoExpirado)
@@ -45,9 +45,9 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^atualizo as seguintes informações:$`, atualizoAsSeguintesInformaes)
 	ctx.Step(`^cada item da lista exibe destino, data, hora e valor da corrida\.$`, cadaItemDaListaExibeDestinoDataHoraEValorDaCorrida)
 	ctx.Step(`^cancelei uma corrida que havia aceitado com destino de (\d+) km e valor estimado de R\$ (\d+),(\d+)$`, canceleiUmaCorridaQueHaviaAceitadoComDestinoDeKmEValorEstimadoDeR)
-	ctx.Step(`^clico em "([^"]*)"\n`, clicoEm)
-	ctx.Step(`^clico em “Avaliar corrida” ao lado da corrida pendente\n`, clicoEmAvaliarCorridaAoLadoDaCorridaPendente)
-	ctx.Step(`^clico na opção "([^"]*)"\n`, clicoNaOpo)
+	ctx.Step(`^clico em "([^"]*)"$`, clicoEm)
+	ctx.Step(`^clico em "([^"]*)" ao lado da corrida pendente$`, clicoEmAoLadoDaCorridaPendente)
+	ctx.Step(`^clico na opção "([^"]*)"$`, clicoNaOpo)
 	ctx.Step(`^confirmo a desativação$`, confirmoADesativao)
 	ctx.Step(`^confirmo a exclusão fornecendo a justificativa "([^"]*)"$`, confirmoAExclusoFornecendoAJustificativa)
 	ctx.Step(`^confirmo a nova senha "([^"]*)"$`, confirmoANovaSenha)
@@ -57,21 +57,21 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^deve ter a opção de aceitar ou recusar a corrida$`, deveTerAOpoDeAceitarOuRecusarACorrida)
 	ctx.Step(`^deve voltar a receber notificações de novas corridas$`, deveVoltarAReceberNotificaesDeNovasCorridas)
 	ctx.Step(`^enquanto o status de “João” estiver como "([^"]*)", não deve receber notificações de novas corridas$`, enquantoOStatusDeJooEstiverComoNoDeveReceberNotificaesDeNovasCorridas)
-	ctx.Step(`^escolho uma nota de (\d+) a (\d+) estrelas e adiciono um comentário opcional\n`, escolhoUmaNotaDeAEstrelasEAdicionoUmComentrioOpcional)
+	ctx.Step(`^escolho uma nota de (\d+) a (\d+) estrelas e adiciono um comentário opcional$`, escolhoUmaNotaDeAEstrelasEAdicionoUmComentrioOpcional)
 	ctx.Step(`^essa entrada apresenta a data e hora do cancelamento, distância estimada e valor previsto da corrida$`, essaEntradaApresentaADataEHoraDoCancelamentoDistnciaEstimadaEValorPrevistoDaCorrida)
 	ctx.Step(`^essa notificação aparece com as opções "([^"]*)" e "([^"]*)"$`, essaNotificaoApareceComAsOpesE)
 	ctx.Step(`^está com o status "([^"]*)"$`, estComOStatus)
-	ctx.Step(`^estou na tela de avaliação de corridas\n`, estouNaTelaDeAvaliaoDeCorridas)
-	ctx.Step(`^estou na tela de histórico de corridas\n`, estouNaTelaDeHistricoDeCorridas)
-	ctx.Step(`^estou na tela de menu principal\n`, estouNaTelaDeMenuPrincipal)
+	ctx.Step(`^estou na tela de avaliação de corridas$`, estouNaTelaDeAvaliaoDeCorridas)
+	ctx.Step(`^estou na tela de histórico de corridas$`, estouNaTelaDeHistricoDeCorridas)
+	ctx.Step(`^estou na tela de menu principal$`, estouNaTelaDeMenuPrincipal)
 	ctx.Step(`^estou visualizando o tempo estimado de chegada de (\d+) minutos$`, estouVisualizandoOTempoEstimadoDeChegadaDeMinutos)
 	ctx.Step(`^eu acesso meu perfil no navegador web$`, euAcessoMeuPerfilNoNavegadorWeb)
 	ctx.Step(`^eu acesso o histórico de alterações$`, euAcessoOHistricoDeAlteraes)
 	ctx.Step(`^eu acesso o link de cancelamento no email recebido$`, euAcessoOLinkDeCancelamentoNoEmailRecebido)
 	ctx.Step(`^eu altero a senha para "([^"]*)"$`, euAlteroASenhaPara)
 	ctx.Step(`^eu cancelo a solicitação$`, euCanceloASolicitao)
+	ctx.Step(`^eu clico "([^"]*)",$`, euClico)
 	ctx.Step(`^eu clico em "([^"]*)"$`, euClicoEm)
-	ctx.Step(`^eu clico “pular”\n`, euClicoPular)
 	ctx.Step(`^eu confirmo a desativação$`, euConfirmoADesativao)
 	ctx.Step(`^eu confirmo a reativação$`, euConfirmoAReativao)
 	ctx.Step(`^eu confirmo digitando "([^"]*)"$`, euConfirmoDigitando)
@@ -125,7 +125,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^eu vejo uma lista cronológica das modificações:$`, euVejoUmaListaCronolgicaDasModificaes)
 	ctx.Step(`^eu vejo uma notificação "([^"]*)"$`, euVejoUmaNotificao)
 	ctx.Step(`^eu volto a receber solicitações de corrida$`, euVoltoAReceberSolicitaesDeCorrida)
-	ctx.Step(`^existe uma corrida que já foi avaliada anteriormente\n`, existeUmaCorridaQueJFoiAvaliadaAnteriormente)
+	ctx.Step(`^existe uma corrida que já foi avaliada anteriormente$`, existeUmaCorridaQueJFoiAvaliadaAnteriormente)
 	ctx.Step(`^faço upload de uma nova foto em formato JPG com (\d+)MB$`, faoUploadDeUmaNovaFotoEmFormatoJPGComMB)
 	ctx.Step(`^faço upload dos documentos obrigatórios:$`, faoUploadDosDocumentosObrigatrios)
 	ctx.Step(`^fico inativo por mais de (\d+) minutos$`, ficoInativoPorMaisDeMinutos)
@@ -147,7 +147,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^não deve ser registrada nenhuma corrida no histórico$`, noDeveSerRegistradaNenhumaCorridaNoHistrico)
 	ctx.Step(`^não interage com a notificação em até “(\d+)” segundos$`, noInterageComANotificaoEmAtSegundos)
 	ctx.Step(`^não sou autenticado$`, noSouAutenticado)
-	ctx.Step(`^não vejo o botão "([^"]*)"\n`, noVejoOBoto)
+	ctx.Step(`^não vejo o botão "([^"]*)"$`, noVejoOBoto)
 	ctx.Step(`^o email contém um link válido por (\d+) hora$`, oEmailContmUmLinkVlidoPorHora)
 	ctx.Step(`^o link de recuperação é invalidado$`, oLinkDeRecuperaoInvalidado)
 	ctx.Step(`^o motorista de nome "([^"]*)" aceitou uma corrida$`, oMotoristaDeNomeAceitouUmaCorrida)
@@ -157,7 +157,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^o motorista recebe a mensagem de erro na tela "([^"]*)"$`, oMotoristaRecebeAMensagemDeErroNaTela)
 	ctx.Step(`^o motorista seleciona a opção "([^"]*)"$`, oMotoristaSelecionaAOpo)
 	ctx.Step(`^o motorista tenta cancelar a corrida selecionando a opção "([^"]*)"$`, oMotoristaTentaCancelarACorridaSelecionandoAOpo)
-	ctx.Step(`^o pop-up exibe os botões “Enviar avaliação” e  “pular”\n`, oPopupExibeOsBotesEnviarAvaliaoEPular)
+	ctx.Step(`^o pop-up exibe os botões "([^"]*)" e  "([^"]*)"$`, oPopupExibeOsBotesE)
 	ctx.Step(`^o pop-up é fechado\.$`, oPopupFechado)
 	ctx.Step(`^o serviço de validação de documentos está disponível$`, oServioDeValidaoDeDocumentosEstDisponvel)
 	ctx.Step(`^o sistema cancela automaticamente a corrida$`, oSistemaCancelaAutomaticamenteACorrida)
@@ -208,6 +208,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^que eu estou na página do meu perfil$`, queEuEstouNaPginaDoMeuPerfil)
 	ctx.Step(`^que eu solicitei exclusão da conta há (\d+) dias$`, queEuSoliciteiExclusoDaContaHDias)
 	ctx.Step(`^que existe outro motorista com ID "([^"]*)"$`, queExisteOutroMotoristaComID)
+	ctx.Step(`^que existe um motorista cadastrado:$`, queExisteUmMotoristaCadastrado)
 	ctx.Step(`^que existe um motorista cadastrado com cnh "([^"]*)"$`, queExisteUmMotoristaCadastradoComCnh)
 	ctx.Step(`^que existe um motorista cadastrado com cpf "([^"]*)"$`, queExisteUmMotoristaCadastradoComCpf)
 	ctx.Step(`^que existe um motorista cadastrado com email "([^"]*)"$`, queExisteUmMotoristaCadastradoComEmail)
@@ -222,6 +223,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^que redefini minha senha usando um link de recuperação$`, queRedefiniMinhaSenhaUsandoUmLinkDeRecuperao)
 	ctx.Step(`^que solicitei recuperação de conta há (\d+) horas$`, queSoliciteiRecuperaoDeContaHHoras)
 	ctx.Step(`^que solicitei recuperação de conta há (\d+) minutos$`, queSoliciteiRecuperaoDeContaHMinutos)
+	ctx.Step(`^realizo login com email "([^"]*)" e senha "([^"]*)"$`, realizoLoginComEmailESenha)
 	ctx.Step(`^realizo o cadastro com dados válidos:$`, realizoOCadastroComDadosVlidos)
 	ctx.Step(`^realizo (\d+) tentativas de login com senha incorreta para "([^"]*)"$`, realizoTentativasDeLoginComSenhaIncorretaPara)
 	ctx.Step(`^recebe uma notificação de corrida$`, recebeUmaNotificaoDeCorrida)
@@ -235,19 +237,20 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^salvo as alterações$`, salvoAsAlteraes)
 	ctx.Step(`^seleciona a opção "([^"]*)"$`, selecionaAOpo)
 	ctx.Step(`^seleciona "([^"]*)" na interface de desencentivo a cancelamento$`, selecionaNaInterfaceDeDesencentivoACancelamento)
-	ctx.Step(`^selecionei uma corrida ainda não avaliada\n`, selecioneiUmaCorridaAindaNoAvaliada)
+	ctx.Step(`^selecionei uma corrida ainda não avaliada$`, selecioneiUmaCorridaAindaNoAvaliada)
 	ctx.Step(`^seleciono o motivo "([^"]*)"$`, selecionoOMotivo)
 	ctx.Step(`^solicito desativar minha conta temporariamente$`, solicitoDesativarMinhaContaTemporariamente)
 	ctx.Step(`^solicito excluir minha conta permanentemente$`, solicitoExcluirMinhaContaPermanentemente)
 	ctx.Step(`^solicito reativar minha conta$`, solicitoReativarMinhaConta)
 	ctx.Step(`^solicito recuperação novamente com o mesmo email$`, solicitoRecuperaoNovamenteComOMesmoEmail)
 	ctx.Step(`^solicito recuperação para "([^"]*)"$`, solicitoRecuperaoPara)
+	ctx.Step(`^sou autenticado com sucesso$`, souAutenticadoComSucesso)
 	ctx.Step(`^sou redirecionado para a página de login$`, souRedirecionadoParaAPginaDeLogin)
-	ctx.Step(`^sou redirecionado para a tela de avaliação de corrida\n`, souRedirecionadoParaATelaDeAvaliaoDeCorrida)
+	ctx.Step(`^sou redirecionado para a tela de avaliação de corrida$`, souRedirecionadoParaATelaDeAvaliaoDeCorrida)
 	ctx.Step(`^submeto o formulário$`, submetoOFormulrio)
 	ctx.Step(`^submeto o formulário com email "([^"]*)"$`, submetoOFormulrioComEmail)
-	ctx.Step(`^tenho pelo menos uma corrida realizada que ainda não foi avaliada\n`, tenhoPeloMenosUmaCorridaRealizadaQueAindaNoFoiAvaliada)
-	ctx.Step(`^tenho uma corrida anterior ainda não avaliada\n`, tenhoUmaCorridaAnteriorAindaNoAvaliada)
+	ctx.Step(`^tenho pelo menos uma corrida realizada que ainda não foi avaliada$`, tenhoPeloMenosUmaCorridaRealizadaQueAindaNoFoiAvaliada)
+	ctx.Step(`^tenho uma corrida anterior ainda não avaliada$`, tenhoUmaCorridaAnteriorAindaNoAvaliada)
 	ctx.Step(`^tento acessar o mesmo link novamente$`, tentoAcessarOMesmoLinkNovamente)
 	ctx.Step(`^tento acessar uma funcionalidade do sistema$`, tentoAcessarUmaFuncionalidadeDoSistema)
 	ctx.Step(`^tento fazer upload de arquivo "([^"]*)"$`, tentoFazerUploadDeArquivo)
@@ -270,21 +273,18 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^vejo a mensagem de erro "([^"]*)"$`, vejoAMensagemDeErro)
 	ctx.Step(`^vejo a notificação "([^"]*)"$`, vejoANotificao)
 	ctx.Step(`^vejo a opção de solicitar um novo link$`, vejoAOpoDeSolicitarUmNovoLink)
+	ctx.Step(`^vejo "([^"]*)" como motorista logado$`, vejoComoMotoristaLogado)
 	ctx.Step(`^vejo estatísticas sobre minhas corridas$`, vejoEstatsticasSobreMinhasCorridas)
 	ctx.Step(`^vejo meus dados pessoais cadastrados$`, vejoMeusDadosPessoaisCadastrados)
 	ctx.Step(`^vejo minha foto de perfil$`, vejoMinhaFotoDePerfil)
+	ctx.Step(`^vejo o dashboard do motorista$`, vejoODashboardDoMotorista)
 	ctx.Step(`^vejo o tempo estimado de chegada até o local de embarque$`, vejoOTempoEstimadoDeChegadaAtOLocalDeEmbarque)
 	ctx.Step(`^vejo os campos de nota e comentário disponíveis para preenchimento\.$`, vejoOsCamposDeNotaEComentrioDisponveisParaPreenchimento)
 	ctx.Step(`^vejo que devo aguardar antes de solicitar novamente$`, vejoQueDevoAguardarAntesDeSolicitarNovamente)
-	ctx.Step(`^vejo um pop-up escrito “Como foi a sua corrida\?”\n`, vejoUmPopupEscritoComoFoiASuaCorrida)
-	ctx.Step(`^vejo uma lista contendo as últimas corridas realizadas\n`, vejoUmaListaContendoAsLtimasCorridasRealizadas)
-	ctx.Step(`^vejo uma mensagem "([^"]*)"\n`, vejoUmaMensagem)
-	ctx.Step(`^visualizo os detalhes dessa corrida\n`, visualizoOsDetalhesDessaCorrida)
-	ctx.Step(`^que existe um motorista cadastrado:$`, queExisteUmMotoristaCadastrado)
-	ctx.Step(`^realizo login com email "([^"]*)" e senha "([^"]*)"$`, realizoLoginComEmailESenha)
-	ctx.Step(`^sou autenticado com sucesso$`, souAutenticadoComSucesso)
-	ctx.Step(`^vejo "([^"]*)" como motorista logado$`, vejoComoMotoristaLogado)
-	ctx.Step(`^vejo o dashboard do motorista$`, vejoODashboardDoMotorista)
+	ctx.Step(`^vejo um pop-up escrito "([^"]*)"$`, vejoUmPopupEscrito)
+	ctx.Step(`^vejo uma lista contendo as últimas corridas realizadas$`, vejoUmaListaContendoAsLtimasCorridasRealizadas)
+	ctx.Step(`^vejo uma mensagem "([^"]*)"$`, vejoUmaMensagem)
+	ctx.Step(`^visualizo os detalhes dessa corrida$`, visualizoOsDetalhesDessaCorrida)
 }
 
 func aContaBloqueadaTemporariamentePorMinutos(arg1 int) error {
@@ -371,7 +371,7 @@ func clicoEm(arg1 string) error {
 	return godog.ErrPending
 }
 
-func clicoEmAvaliarCorridaAoLadoDaCorridaPendente() error {
+func clicoEmAoLadoDaCorridaPendente(arg1 string) error {
 	return godog.ErrPending
 }
 
@@ -467,11 +467,11 @@ func euCanceloASolicitao() error {
 	return godog.ErrPending
 }
 
-func euClicoEm(arg1 string) error {
+func euClico(arg1 string) error {
 	return godog.ErrPending
 }
 
-func euClicoPular() error {
+func euClicoEm(arg1 string) error {
 	return godog.ErrPending
 }
 
@@ -815,7 +815,7 @@ func oMotoristaTentaCancelarACorridaSelecionandoAOpo(arg1 string) error {
 	return godog.ErrPending
 }
 
-func oPopupExibeOsBotesEnviarAvaliaoEPular() error {
+func oPopupExibeOsBotesE(arg1, arg2 string) error {
 	return godog.ErrPending
 }
 
@@ -1311,7 +1311,7 @@ func vejoQueDevoAguardarAntesDeSolicitarNovamente() error {
 	return godog.ErrPending
 }
 
-func vejoUmPopupEscritoComoFoiASuaCorrida() error {
+func vejoUmPopupEscrito(arg1 string) error {
 	return godog.ErrPending
 }
 

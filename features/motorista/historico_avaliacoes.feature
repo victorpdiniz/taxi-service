@@ -14,7 +14,7 @@ Scenario: Acessar interface de avaliação de corrida
 Given que estou logado como motorista
 And tenho pelo menos uma corrida realizada que ainda não foi avaliada
 When acesso histórico de corridas
-And clico em “Avaliar corrida” ao lado da corrida pendente
+And clico em "Avaliar corrida" ao lado da corrida pendente
 Then sou redirecionado para a tela de avaliação de corrida
 And vejo os campos de nota e comentário disponíveis para preenchimento.
 
@@ -39,8 +39,8 @@ Scenario: Visualização de corrida com avaliação pendente
 Given que estou logado como motorista
 And tenho uma corrida anterior ainda não avaliada
 When estou na tela de menu principal
-Then vejo um pop-up escrito “Como foi a sua corrida?”
-And o pop-up exibe os botões “Enviar avaliação” e  “pular”
-And eu clico “pular”, 
+Then vejo um pop-up escrito "Como foi a sua corrida?"
+And o pop-up exibe os botões "Enviar avaliação" e  "pular"
+And eu clico "pular", 
 Then o pop-up é fechado.
 
