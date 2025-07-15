@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -67,21 +68,25 @@ func (m *MockMotoristaService) VerificarForcaSenha(senha string) (string, error)
 }
 
 func TestMotoristaController(t *testing.T) {
-	app := fiber.New()
-	mockService := new(MockMotoristaService)
-	controller := NewMotoristaController(mockService)
-
-	// Registrar rotas
-	app.Post("/api/motoristas", controller.CadastrarMotorista)
-	app.Get("/api/motoristas/:id", controller.BuscarMotorista)
-	app.Post("/api/motoristas/:id/documentos", controller.UploadDocumento)
-	app.Post("/api/motoristas/:id/validar-documentos", controller.ValidarDocumentos)
-	app.Put("/api/motoristas/:id/aprovar", controller.AprovarMotorista)
-	app.Put("/api/motoristas/:id/rejeitar", controller.RejeitarMotorista)
-	app.Post("/api/motoristas/verificar-senha", controller.VerificarForcaSenha)
-	app.Post("/api/motoristas/validar-documento", controller.ValidarDocumentoUpload)
+	// setup fornece um novo app e mockService com as rotas registradas
+	setup := func() (*fiber.App, *MockMotoristaService) {
+		app := fiber.New()
+		mockService := new(MockMotoristaService)
+		controller := NewMotoristaController(mockService)
+		// Registrar rotas
+		app.Post("/api/motoristas", controller.CadastrarMotorista)
+		app.Get("/api/motoristas/:id", controller.BuscarMotorista)
+		app.Post("/api/motoristas/:id/documentos", controller.UploadDocumento)
+		app.Post("/api/motoristas/:id/validar-documentos", controller.ValidarDocumentos)
+		app.Put("/api/motoristas/:id/aprovar", controller.AprovarMotorista)
+		app.Put("/api/motoristas/:id/rejeitar", controller.RejeitarMotorista)
+		app.Post("/api/motoristas/verificar-senha", controller.VerificarForcaSenha)
+		app.Post("/api/motoristas/validar-documento", controller.ValidarDocumentoUpload)
+		return app, mockService
+	}
 
 	t.Run("Cadastrar motorista com sucesso", func(t *testing.T) {
+		app, mockService := setup()
 		request := services.CadastroMotoristaRequest{
 			Nome:             "João Silva",
 			DataNascimento:   "15/03/1990",
@@ -124,6 +129,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Erro - CPF já cadastrado", func(t *testing.T) {
+		app, mockService := setup()
 		request := services.CadastroMotoristaRequest{
 			Nome:             "João Silva",
 			DataNascimento:   "15/03/1990",
@@ -139,7 +145,7 @@ func TestMotoristaController(t *testing.T) {
 			ConfirmacaoSenha: "MinhaSenh@123",
 		}
 
-		mockService.On("CadastrarMotorista", request).Return(nil, assert.AnError)
+		mockService.On("CadastrarMotorista", request).Return(nil, errors.New("CPF já cadastrado"))
 
 		body, _ := json.Marshal(request)
 		req := httptest.NewRequest("POST", "/api/motoristas", bytes.NewReader(body))
@@ -147,12 +153,13 @@ func TestMotoristaController(t *testing.T) {
 
 		resp, err := app.Test(req)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+		assert.Equal(t, http.StatusConflict, resp.StatusCode)
 
 		mockService.AssertExpectations(t)
 	})
 
 	t.Run("Buscar motorista", func(t *testing.T) {
+		app, mockService := setup()
 		motorista := &models.Motorista{
 			ID:    "123",
 			Nome:  "João Silva",
@@ -176,6 +183,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Buscar motorista não encontrado", func(t *testing.T) {
+		app, mockService := setup()
 		mockService.On("BuscarMotorista", "999").Return(nil, assert.AnError)
 
 		req := httptest.NewRequest("GET", "/api/motoristas/999", nil)
@@ -188,6 +196,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Upload documento", func(t *testing.T) {
+		app, mockService := setup()
 		uploadRequest := services.UploadDocumentoRequest{
 			TipoDocumento:  "CNH",
 			CaminhoArquivo: "/uploads/cnh.jpg",
@@ -214,6 +223,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Validar documentos", func(t *testing.T) {
+		app, mockService := setup()
 		mockService.On("ValidarDocumentos", "123").Return(nil)
 
 		req := httptest.NewRequest("POST", "/api/motoristas/123/validar-documentos", nil)
@@ -231,6 +241,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Aprovar motorista", func(t *testing.T) {
+		app, mockService := setup()
 		mockService.On("AprovarMotorista", "123").Return(nil)
 
 		req := httptest.NewRequest("PUT", "/api/motoristas/123/aprovar", nil)
@@ -248,6 +259,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Rejeitar motorista", func(t *testing.T) {
+		app, mockService := setup()
 		rejectRequest := map[string]string{
 			"motivo": "Documentos com problemas de qualidade",
 		}
@@ -271,6 +283,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Verificar força da senha", func(t *testing.T) {
+		app, mockService := setup()
 		senhaRequest := map[string]string{
 			"senha": "MinhaSenh@123",
 		}
@@ -294,6 +307,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Validar documento upload - válido", func(t *testing.T) {
+		app, _ := setup()
 		validationRequest := map[string]string{
 			"formato": "JPG",
 			"tamanho": "2097152", // 2MB
@@ -314,6 +328,7 @@ func TestMotoristaController(t *testing.T) {
 	})
 
 	t.Run("Validar documento upload - inválido", func(t *testing.T) {
+		app, _ := setup()
 		validationRequest := map[string]string{
 			"formato": "TXT",
 			"tamanho": "1048576", // 1MB
