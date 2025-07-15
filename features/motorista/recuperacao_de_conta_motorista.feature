@@ -8,35 +8,31 @@ Funcionalidade: Recuperação de Conta do Motorista
     Dado que existe um motorista cadastrado com os dados:
       | nome   | José Santos             |
       | email  | jose.santos@email.com   |
-      | cpf    | 987.654.321-00          |
       | status | ativo                   |
-    E o sistema de envio de emails está funcionando
+    E estou na página "Recuperação de Conta"
 
   Cenário: Solicitar recuperação com email válido
-    Dado que estou na página "Recuperação de Conta"
     Quando submeto o formulário com email "jose.santos@email.com"
-    Então vejo a mensagem "Instruções de recuperação enviadas para jose.santos@email.com"
-    E um email de recuperação é enviado para "jose.santos@email.com"
-    E o email contém um link válido por 1 hora
+    Então vejo "Instruções de recuperação enviadas para jose.santos@email.com"
+    E um email de recuperação é enviado
+    E o link expira em 1 hora
 
   Cenário: Tentativa de recuperação com email não cadastrado
-    Dado que estou na página "Recuperação de Conta"
     Quando submeto o formulário com email "naoexiste@email.com"
-    Então vejo a mensagem de erro "Este email não está cadastrado em nosso sistema"
-    E nenhum email de recuperação é enviado
+    Então vejo erro "Este email não está cadastrado em nosso sistema"
+    E nenhum email é enviado
 
   Esquema do Cenário: Validação de formato de email
-    Dado que estou na página "Recuperação de Conta"
-    Quando submeto o formulário com email "<email_invalido>"
-    Então vejo a mensagem de erro "<mensagem_erro>"
+    Quando submeto o formulário com email "<email>"
+    Então vejo erro "<mensagem>"
     E nenhum email é enviado
 
     Exemplos:
-      | email_invalido  | mensagem_erro                     |
-      |                 | Email é obrigatório               |
-      | email_invalido  | Formato de email inválido         |
-      | @email.com      | Formato de email inválido         |
-      | email@          | Formato de email inválido         |
+      | email          | mensagem                            |
+      |                | Email é obrigatório                 |
+      | email_invalido | Formato de email inválido           |
+      | @email.com     | Formato de email inválido           |
+      | email@         | Formato de email inválido           |
 
   Cenário: Redefinir senha com sucesso
     Dado que solicitei recuperação de conta há 30 minutos
