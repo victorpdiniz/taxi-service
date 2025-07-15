@@ -5,8 +5,6 @@ import (
 
 	"your-app/routes"
 
-	"your-app/database"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
@@ -32,7 +30,7 @@ _,,_,*^____      _____''*g*\"*,          Welcome to your app!
 
 func main() {
 	app := fiber.New()
-	database.ConnectDb()
+	// database.ConnectDb()
 
 	routes.SetupRoutes(app)
 
