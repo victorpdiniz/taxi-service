@@ -199,15 +199,15 @@ func (s *MotoristaServiceImpl) ValidarDadosCadastro(request CadastroMotoristaReq
 
 // UploadDocumento adiciona um documento ao motorista
 func (s *MotoristaServiceImpl) UploadDocumento(motoristaID string, request UploadDocumentoRequest) error {
+	// validar formato e tamanho antes de qualquer acesso ao repo
+	if err := models.ValidarDocumento(request.Formato, request.Tamanho); err != nil {
+		return err
+	}
+
 	// Buscar motorista
 	motorista, err := s.motoristaRepo.BuscarPorID(motoristaID)
 	if err != nil {
 		return errors.New("motorista não encontrado")
-	}
-
-	// Validar documento
-	if err := models.ValidarDocumento(request.Formato, request.Tamanho); err != nil {
-		return err
 	}
 
 	// Verificar se já existe documento do mesmo tipo

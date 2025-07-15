@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"os"
 	"taxi_service/controllers"
 	"taxi_service/repositories"
 	"taxi_service/services"
@@ -26,12 +25,7 @@ func SetupMotoristaRoutes(api fiber.Router) {
 	motoristaRepo := repositories.NewJSONMotoristaRepository()
 
 	// Escolher serviço de email baseado no ambiente
-	var emailService services.EmailService
-	if os.Getenv("APP_ENV") == "production" {
-		emailService = services.NewSMTPEmailServiceFromEnv()
-	} else {
-		emailService = services.NewMockEmailService()
-	}
+	emailService := services.NewSMTPEmailServiceFromEnv()
 
 	motoristaService := services.NewMotoristaService(motoristaRepo, emailService)
 	motoristaController := controllers.NewMotoristaController(motoristaService)
