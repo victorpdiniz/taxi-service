@@ -345,6 +345,6 @@ func TestMotoristaController(t *testing.T) {
 		var response map[string]interface{}
 		json.NewDecoder(resp.Body).Decode(&response)
 
-		assert.Contains(t, response["error"], "Formato não suportado")
+		assert.Contains(t, response["error"], "formato não suportado")
 	})
 }

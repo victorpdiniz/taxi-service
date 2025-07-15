@@ -165,7 +165,7 @@ func ValidarIdade(dataNascimento time.Time) error {
 	}
 
 	if idade < 18 {
-		return errors.New("Motorista deve ter pelo menos 18 anos")
+		return errors.New("motorista deve ter pelo menos 18 anos")
 	}
 
 	return nil
@@ -182,7 +182,7 @@ func ValidarValidadeCNH(validadeCNH time.Time) error {
 // ValidarForcaSenha retorna a força da senha e sugestões
 func ValidarForcaSenha(senha string) (string, error) {
 	if len(senha) < 8 {
-		return "Fraca", errors.New("Senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo")
+		return "Fraca", errors.New("senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo")
 	}
 
 	temMaiuscula := regexp.MustCompile(`[A-Z]`).MatchString(senha)
@@ -205,7 +205,7 @@ func ValidarForcaSenha(senha string) (string, error) {
 	}
 
 	if criterios < 4 {
-		return "Fraca", errors.New("Senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo")
+		return "Fraca", errors.New("senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo")
 	}
 
 	if len(senha) >= 12 && criterios == 4 {
@@ -229,13 +229,13 @@ func ValidarDocumento(formato string, tamanho int64) error {
 	}
 
 	if !formatoValido {
-		return errors.New("Formato não suportado. Use JPG, PNG ou PDF")
+		return errors.New("formato não suportado. Use JPG, PNG ou PDF")
 	}
 
 	// Tamanho máximo: 5MB
 	tamanhoMaximo := int64(5 * 1024 * 1024)
 	if tamanho > tamanhoMaximo {
-		return errors.New("Arquivo muito grande. Tamanho máximo: 5MB")
+		return errors.New("arquivo muito grande. Tamanho máximo: 5MB")
 	}
 
 	return nil
