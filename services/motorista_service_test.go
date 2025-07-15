@@ -386,7 +386,7 @@ func TestUploadDocumento(t *testing.T) {
 
 		err := service.UploadDocumento(testDriverID, largeFileRequest)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "Arquivo muito grande")
+		assert.Contains(t, err.Error(), "arquivo muito grande")
 	})
 
 	t.Run("Invalid Format Error", func(t *testing.T) {
@@ -406,7 +406,7 @@ func TestUploadDocumento(t *testing.T) {
 
 		err := service.UploadDocumento(testDriverID, invalidFormatRequest)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "Formato não suportado")
+		assert.Contains(t, err.Error(), "formato não suportado")
 	})
 
 	t.Run("Document Validation", func(t *testing.T) {
