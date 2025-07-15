@@ -1,16 +1,15 @@
-Feature: Cancelamento de Corrida
-    Como um sistema de taxi
-    Eu quero gerenciar o cancelamento de corridas
-    Para garantir o funcionamento adequado do serviço
+Feature: Tempo de Corrida
+As a sistema de monitoramento de corridas
+I want to acompanhar o tempo de execução de uma corrida
+So that eu possa reagir de forma adequada a atrasos ou adiantamentos
 
-Scenario: Motorista cancela corrida antes de chegar ao local
-    
-    Given o motorista de nome "João" aceitou uma corrida
-    And o motorista está a "5" minutos do local de embarque "abc"
-    When o motorista seleciona a opção "Cancelar"
-    And seleciona "Confirmar" na interface de desencentivo a cancelamento
-    Then o sistema cancela o progresso da corrida
-    And o motorista recebe a mensagem de confirmação na tela "Corrida cancelada com sucesso"
+Scenario: Notificar atraso do motorista após tempo limite
+Given o tempo estimado de chegada ao destino é de "20" minutos
+And o tempo decorrido é de "25" minutos
+When o sistema detecta que o tempo foi ultrapassado
+Then uma notificação é enviada para o passageiro
+And o status do motorista é atualizado para "atrasado"
+And é exibida a tag "atrasado" na tela do motorista
 
 Scenario: Motorista conclui corrida antes do tempo estimado
 Given o tempo estimado de chegada ao destino é de "20" minutos
