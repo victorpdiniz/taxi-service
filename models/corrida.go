@@ -17,6 +17,7 @@ type Corrida struct {
 	PassageiroID   int
 	TempoEstimado  int // minutos
 	TempoDecorrido int // minutos
+	Preco          float64 // valor da corrida
 	Status         string
 	BonusAplicado  bool
 	DataInicio     time.Time
