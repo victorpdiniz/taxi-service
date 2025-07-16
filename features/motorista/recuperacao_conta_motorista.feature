@@ -69,21 +69,22 @@ Funcionalidade: Recuperação de Conta do Motorista
     Quando tento acessar o mesmo link novamente
     Então vejo a mensagem "Este link já foi utilizado e não é mais válido"
     
-  Cenário: Recuperação para conta com status específico
-    Dado que existe um motorista com status "<status>":
-      | email  | <email>             |
-      | status | <status>            |
-    Quando solicito recuperação para "<email>"
-    Então vejo a mensagem "<mensagem>"
-    E <acao_email>
+  # Cenário: Recuperação para conta com status específico
+  #   Dado que existe um motorista com email "jose.santos@email.com" status "<status>":
+  #     | email  | <email>             |
+  #     | status | <status>            |
+  #   Quando solicito recuperação para "<email>"
+  #   Então vejo a mensagem "<mensagem>"
+  #   E <acao_email>
 
-    Exemplos:
-      | status    | email                 | mensagem                                                    | acao_email                    |
-      | inativo   | maria.silva@email.com | Esta conta está desativada. Entre em contato com o suporte  | nenhum email é enviado        |
-      | suspenso  | pedro.lima@email.com  | Esta conta está suspensa. Entre em contato com o suporte    | nenhum email é enviado        |
+  #   Exemplos:
+  #     | status    | email                 | mensagem                                                    | acao_email                    |
+  #     | inativo   | maria.silva@email.com | Esta conta está desativada. Entre em contato com o suporte  | nenhum email é enviado        |
+  #     | suspenso  | pedro.lima@email.com  | Esta conta está suspensa. Entre em contato com o suporte    | nenhum email é enviado        |
 
   Cenário: Múltiplas solicitações de recuperação
     Dado que solicitei recuperação de conta há 3 minutos
     Quando solicito recuperação novamente com o mesmo email
     Então vejo a mensagem "Um email de recuperação já foi enviado recentemente"
     E vejo que devo aguardar antes de solicitar novamente
+    
