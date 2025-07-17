@@ -5,75 +5,79 @@ Funcionalidade: Autenticação de Motorista
   Para acessar minhas funcionalidades de trabalho
 
   Contexto:
-    Dado que existe um motorista cadastrado:
-      | nome        | João Silva              |
-      | email       | joao.silva@email.com    |
-      | cpf         | 123.456.789-00          |
-      | cnh         | 12345678901             |
-      | status      | ativo                   |
-      | senha       | MinhaSenh@123           |
+    Dado existe um motorista cadastrado com os dados:
+      | dado  | valor                |
+      | email | joao.silva@email.com |
+      | senha | MinhaSenh@123        |
 
-  Cenário: Login bem-sucedido com credenciais válidas
+  Cenário: Login bem-sucedido de motorista
+    Dado estou na página "Login do Motorista"
+    E não estou autenticado como motorista
+    E o status de "joao.silva@email.com" é "ativo"
     Quando realizo login com email "joao.silva@email.com" e senha "MinhaSenh@123"
-    Então sou autenticado com sucesso
-    E vejo o dashboard do motorista
-    E vejo "João Silva" como motorista logado
+    Então estou autenticado como "joao.silva@email.com"
+    E estou na página "Painel do Motorista"
 
   Esquema do Cenário: Tentativa de login com credenciais inválidas
+    Dado estou na página "Login do Motorista"
+    E não estou autenticado como motorista
+    E o status de "joao.silva@email.com" é "ativo"
     Quando realizo login com email "<email>" e senha "<senha>"
-    Então vejo a mensagem de erro "<mensagem_erro>"
-    E não sou autenticado
+    Então vejo a mensagem de erro "<mensagem>"
+    E estou na página "Login do Motorista"
 
     Exemplos:
-      | email                    | senha         | mensagem_erro              |
+      | email                    | senha         | mensagem                   |
       | joao.silva@email.com     | senhaerrada   | Credenciais inválidas      |
       | inexistente@email.com    | qualquersenha | Credenciais inválidas      |
       | email_invalido           | MinhaSenh@123 | Formato de email inválido  |
       | joao.silva@email.com     |               | Senha é obrigatória        |
       |                          | MinhaSenh@123 | Email é obrigatório        |
 
-  Cenário: Bloqueio temporário após múltiplas tentativas
-    Dado que o email "joao.silva@email.com" não está bloqueado
-    Quando realizo 5 tentativas de login com senha incorreta para "joao.silva@email.com"
-    Então a conta é bloqueada temporariamente por 15 minutos
-    E vejo a mensagem "Conta bloqueada temporariamente"
-    E não consigo fazer login mesmo com credenciais corretas
-
-  Esquema do Cenário: Login com status de conta específico
-    Dado que existe um motorista com status "<status>":
-      | email  | <email>             |
-      | senha  | <senha>             |
-    Quando realizo login com email "<email>" e senha "<senha>"
-    Então vejo a mensagem "<mensagem>"
-    E <resultado>
+  Esquema do Cenário: Login de motorista sem documentos aprovados
+    Dado estou na página "Login do Motorista"
+    E não estou autenticado como motorista
+    Dado o status de "joao.silva@email.com" é "<status>":
+    Quando realizo login com email "joao.silva@email.com" e senha "MinhaSenh@123"
+    Então estou na página "Upload de Documentos"
 
     Exemplos:
-      | status    | email                 | senha         | mensagem                                  | resultado            |
-      | inativo   | maria.santos@email.com| MinhaSenh@456 | Conta inativa. Entre em contato com o suporte | não sou autenticado |
-      | suspenso  | pedro.lima@email.com  | MinhaSenh@789 | Conta suspensa. Entre em contato com o suporte | não sou autenticado |
+      | status                |
+      | aguardando_documentos | 
+      | documentos_rejeitados |
 
-  Cenário: Logout automático por inatividade
-    Dado que estou logado como motorista
-    Quando fico inativo por mais de 30 minutos
-    E tento acessar uma funcionalidade do sistema
-    Então sou redirecionado para a página de login
-    E vejo a mensagem "Sessão expirada por inatividade"
-    Quando eu realizo login com email "joao.silva@email.com" e senha "MinhaSenh@123"
-    Então eu vejo a mensagem "Dispositivo não autorizado. Solicite autorização no suporte"
-    E uma notificação é enviada para o email do motorista sobre tentativa de acesso
+  Esquema do Cenário: Tentativa de login com status inválido
+    Dado estou na página "Login do Motorista"
+    E não estou autenticado como motorista
+    E o status de "joao.silva@email.com" é "<status>"
+    Quando realizo login com email "joao.silva@email.com" e senha "MinhaSenh@123"
+    Então vejo a mensagem de erro "<mensagem>"
+    E estou na página "Login do Motorista"
 
-  Cenário: Logout automático por inatividade
-    Dado que eu estou logado como motorista "João Silva"
-    E eu fico inativo por mais de 30 minutos
-    Quando eu tento acessar uma funcionalidade do sistema
-    Então eu sou redirecionado para a página de login
-    E eu vejo a mensagem "Sessão expirada por inatividade"
+    Exemplos:
+      | status                | mensagem                                                                                                |
+      | documentos_em_analise | Seus documentos ainda estão em análise.                                        | 
+      | aguardando_exclusao   | Sua conta está em processo de exclusão. Contate o suporte se isso for um erro. |
+      | encerrado             | Sua conta foi encerrada. Em caso de dúvidas, contate o suporte.                |
 
-  Cenário: Recuperação de sessão após reconexão de internet
-    Dado que eu estou logado como motorista "João Silva"
-    E eu perco a conexão com a internet por 2 minutos
-    E eu recupero a conexão com a internet
-    Quando eu tento acessar o dashboard
-    Então eu permaneço logado
-    E eu vejo uma notificação "Conexão restaurada"
-    E meus dados são sincronizados automaticamente
+  Esquema do Cenário: Redirecionamento de motorista autenticado
+    Dado estou autenticado como "joao.silva@email.com"
+    Quando estou na página "<pagina>"
+    Então estou na página "Painel do Motorista"
+
+    Exemplos:
+    | pagina                |
+    | Cadastro do Motorista |
+    | Login do Motorista    |
+    | Upload de Documentos  |
+
+  
+  Esquema do Cenário: Tentativa de acesso sem estar autenticado
+    Dado não estou autenticado como motorista
+    Quando estou na página "<pagina>"
+    Então estou na página "Login do Motorista"
+
+    Exemplos:
+    | pagina              |
+    | Painel do Motorista |
+ # TODO: Inserir todas as outras páginas aqui
