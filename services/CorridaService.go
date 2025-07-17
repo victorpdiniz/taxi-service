@@ -1,8 +1,8 @@
 package services
 
 import (
+	"taxi_service/models"
 	"time"
-	"your-app/models"
 
 	"github.com/gofiber/fiber/v2"
 )
