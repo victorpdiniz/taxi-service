@@ -5,86 +5,63 @@ Funcionalidade: Recuperação de Conta do Motorista
   Para voltar a trabalhar e acessar o sistema
 
   Contexto:
-    Dado que existe um motorista cadastrado com os dados:
-      | nome   | José Santos             |
-      | email  | jose.santos@email.com   |
-      | status | ativo                   |
+    Dado existe um motorista cadastrado com os dados:
+      | email  | jose.santos@email.com |
+      | status | ativo                 |
     E estou na página "Recuperação de Conta"
 
   Cenário: Solicitar recuperação com email válido
-    Quando submeto o formulário com email "jose.santos@email.com"
-    Então vejo "Instruções de recuperação enviadas para jose.santos@email.com"
-    E um email de recuperação é enviado
-    E o link expira em 1 hora
+    Quando preencho o campo "email" com o valor "jose.santos@email.com"
+    E submeto o formulário
+    Então vejo a mensagem "Instruções de recuperação enviadas para jose.santos@email.com"
+    E um email é enviado para "joao.silva@email.com" com o assunto "Recuperação de Conta" 
 
   Cenário: Tentativa de recuperação com email não cadastrado
-    Quando submeto o formulário com email "naoexiste@email.com"
-    Então vejo erro "Este email não está cadastrado em nosso sistema"
-    E nenhum email é enviado
+    Dado não existe um motorista cadastrado com os dados:
+      | email | nao.existe@email.com |
+    Quando preencho o campo "email" com o valor "nao.existe@email.com"
+    E submeto o formulário
+    Então vejo a mensagem de erro "O E-mail informado não está cadastrado."
 
-  Esquema do Cenário: Validação de formato de email
-    Quando submeto o formulário com email "<email>"
-    Então vejo erro "<mensagem>"
-    E nenhum email é enviado
+  Esquema do Cenário: Tentativa de recuperação com email inválido
+    Dado não existe um motorista cadastrado com os dados:
+      | email | nao.existe@email.com |
+    Quando preencho o campo "email" com o valor "<valor>"
+    E submeto o formulário
+    Então vejo a mensagem de erro "<mensagem>"
 
     Exemplos:
-      | email          | mensagem                            |
-      |                | Email é obrigatório                 |
-      | email_invalido | Formato de email inválido           |
-      | @email.com     | Formato de email inválido           |
-      | email@         | Formato de email inválido           |
+      | valor                | mensagem                                |
+      |                      | Email é obrigatório.                    |
+      | email_invalido       | Formato de email inválido.              |
+      | nao.existe@email.com | O E-mail informado não está cadastrado. |
 
   Cenário: Redefinir senha com sucesso
-    Dado que solicitei recuperação de conta há 30 minutos
-    E acessei o link de recuperação válido
-    Quando preencho a nova senha "NovaSenha@123"
-    E confirmo a nova senha "NovaSenha@123"
+    Dado que estou na página "Redefinir Senha" através de link válido para "jose.santos@email.com"
+    Quando preencho os campos:
+      | nova_senha  | NovaSenha@123 |
+      | confirmacao | NovaSenha@123 |
     E submeto o formulário
     Então vejo a mensagem "Senha redefinida com sucesso"
-    E posso fazer login com a nova senha "NovaSenha@123"
-    E o link de recuperação é invalidado
+    E existe um motorista cadastrado com os dados:
+      | email | jose.santos@email.com |
+      | senha | NovaSenha@123         |
 
   Esquema do Cenário: Validação na redefinição de senha
-    Dado que estou na página "Redefinir Senha" através de link válido
-    Quando preencho a nova senha "<nova_senha>"
-    E confirmo a nova senha "<confirmacao>"
+    Dado que estou na página "Redefinir Senha" através de link válido para "jose.santos@email.com"
+    Quando preencho os campos:
+      | nova_senha  | <nova_senha>  |
+      | confirmacao | <confirmacao> |
     E submeto o formulário
     Então vejo a mensagem de erro "<mensagem_erro>"
 
     Exemplos:
-      | nova_senha     | confirmacao    | mensagem_erro                                    |
-      | 123456         | 123456         | Senha deve ter pelo menos 8 caracteres e incluir maiúscula, minúscula, número e símbolo |
-      | NovaSenha@123  | NovaSenha@456  | Senhas não conferem                              |
-      |                | NovaSenha@123  | Nova senha é obrigatória                         |
-      | NovaSenha@123  |                | Confirmação de senha é obrigatória               |
-
-  Cenário: Tentativa de acesso com link expirado
-    Dado que solicitei recuperação de conta há 2 horas
-    Quando acesso o link de recuperação expirado
-    Então vejo a mensagem "Este link de recuperação expirou"
-    E vejo a opção de solicitar um novo link
-
-  Cenário: Tentativa de reutilizar link já usado
-    Dado que redefini minha senha usando um link de recuperação
-    Quando tento acessar o mesmo link novamente
-    Então vejo a mensagem "Este link já foi utilizado e não é mais válido"
-    
-  # Cenário: Recuperação para conta com status específico
-  #   Dado que existe um motorista com email "jose.santos@email.com" status "<status>":
-  #     | email  | <email>             |
-  #     | status | <status>            |
-  #   Quando solicito recuperação para "<email>"
-  #   Então vejo a mensagem "<mensagem>"
-  #   E <acao_email>
-
-  #   Exemplos:
-  #     | status    | email                 | mensagem                                                    | acao_email                    |
-  #     | inativo   | maria.silva@email.com | Esta conta está desativada. Entre em contato com o suporte  | nenhum email é enviado        |
-  #     | suspenso  | pedro.lima@email.com  | Esta conta está suspensa. Entre em contato com o suporte    | nenhum email é enviado        |
-
-  Cenário: Múltiplas solicitações de recuperação
-    Dado que solicitei recuperação de conta há 3 minutos
-    Quando solicito recuperação novamente com o mesmo email
-    Então vejo a mensagem "Um email de recuperação já foi enviado recentemente"
-    E vejo que devo aguardar antes de solicitar novamente
-    
+      Exemplos:
+      | nova_senha     | confirmacao    | mensagem_erro                                                                            |
+      | 123456         | 123456         | Senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo |
+      | NovaSenha@456  | NovaSenha@789  | Nova senha e confirmação não correspondem.                                               |
+      |                | NovaSenha@789  | Nova senha é obrigatória.                                                                |  
+  
+  Cenário: Acesso à redefinição de senha com link inválido
+    Dado que estou na página "Redefinir Senha" através de link válido para ""
+    Então vejo a mensagem de erro "Este link não é válido."

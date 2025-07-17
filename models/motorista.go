@@ -11,12 +11,12 @@ import (
 type StatusMotorista string
 
 const (
-	StatusAguardandoAprovacao StatusMotorista = "aguardando_aprovacao"
+	StatusAguardandoAprovacao StatusMotorista = "aguardando_documentos"
 	StatusDocumentosAnalise   StatusMotorista = "documentos_em_analise"
 	StatusAprovado            StatusMotorista = "aprovado"
-	StatusRejeitado           StatusMotorista = "rejeitado"
+	StatusRejeitado           StatusMotorista = "documentos_rejeitados"
 	StatusAtivo               StatusMotorista = "ativo"
-	StatusInativo             StatusMotorista = "inativo"
+	StatusEncerrado           StatusMotorista = "encerrado"
 )
 
 // CategoriaCNH representa as categorias de CNH
@@ -61,7 +61,7 @@ type Documento struct {
 	CaminhoArquivo string    `json:"caminho_arquivo"`
 	Formato        string    `json:"formato"`
 	Tamanho        int64     `json:"tamanho"`
-	Status         string    `json:"status"` // pendente, aprovado, rejeitado
+	Status         string    `json:"status"`
 	CriadoEm       time.Time `json:"criado_em"`
 }
 
