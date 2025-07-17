@@ -30,6 +30,8 @@ _,,_,*^____      _____''*g*\"*,          Welcome to your app!
 
 func main() {
 	app := fiber.New()
+
+	// Comentado pois estamos usando JSON ao invés de banco de dados
 	// database.ConnectDb()
 
 	routes.SetupRoutes(app)
