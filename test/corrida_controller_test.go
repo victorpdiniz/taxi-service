@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http/httptest"
+	"taxi_service/controllers"
+	"taxi_service/models"
 	"testing"
-	"your-app/controllers"
-	"your-app/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"

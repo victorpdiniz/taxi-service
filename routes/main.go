@@ -14,5 +14,5 @@ func SetupRoutes(app *fiber.App) {
 
 	SetupDummyRoutes(api)
 	SetupMotoristaRoutes(api)
-
+	SetupRegisterCorridaRoutes(api)
 }
