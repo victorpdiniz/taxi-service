@@ -288,7 +288,7 @@ def validate_args(args):
 def get_test_file_path(feature_name):
     """Generate the test file path based on the feature name."""
     snake_name = get_snake_case(feature_name)
-    return f"./features_{snake_name}_test.go"
+    return f"./{snake_name}_test.go"
 
 def main():
     # Set up argument parser with detailed description
