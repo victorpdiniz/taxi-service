@@ -87,7 +87,7 @@ func (r *JSONDummyUserRepository) BuscarPorEmail(email string) (*models.DummyUse
 	return nil, fmt.Errorf("user não encontrado")
 }
 
-func (r *JSONDummyUserRepository) BuscarPorID(id int) (*models.DummyUser, error) {
+func (r *JSONDummyUserRepository) BuscarPorID(id uint) (*models.DummyUser, error) {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 
@@ -115,7 +115,7 @@ func (r *JSONDummyUserRepository) Criar(user *models.DummyUser) error {
 	}
 
 	// Gerar novo ID
-	maxID := 0
+	var maxID uint = 0
 	for _, u := range users {
 		if u.ID > maxID {
 			maxID = u.ID
@@ -127,7 +127,7 @@ func (r *JSONDummyUserRepository) Criar(user *models.DummyUser) error {
 	return r.salvarTodos(users)
 }
 
-func (r *JSONDummyUserRepository) Atualizar(id int, user *models.DummyUser) error {
+func (r *JSONDummyUserRepository) Atualizar(id uint, user *models.DummyUser) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -147,7 +147,7 @@ func (r *JSONDummyUserRepository) Atualizar(id int, user *models.DummyUser) erro
 	return fmt.Errorf("user não encontrado")
 }
 
-func (r *JSONDummyUserRepository) Excluir(id int) error {
+func (r *JSONDummyUserRepository) Excluir(id uint) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
