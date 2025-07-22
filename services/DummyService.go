@@ -1,76 +1,116 @@
 package services
 
 import (
-    "taxi-service/database"
+    "encoding/json"
+    "errors"
+    "os"
     "taxi-service/models"
-	"gorm.io/gorm"
 )
 
-func ListDummyUser() ([]models.DummyUser, error) {
-	var users []models.DummyUser
-	err := database.GetDB().Find(&users).Error
-	if err != nil {
-		return []models.DummyUser{}, err
-	}
+const dummyUserFile = "./data/dummy_users.json"
 
-	return users, nil
+func readUsers() ([]models.DummyUser, error) {
+    // Criar diretório se não existir
+    if err := os.MkdirAll("./data", 0755); err != nil {
+        return nil, err
+    }
+
+    file, err := os.Open(dummyUserFile)
+    if err != nil {
+        if os.IsNotExist(err) {
+            return []models.DummyUser{}, nil
+        }
+        return nil, err
+    }
+    defer file.Close()
+
+    var users []models.DummyUser
+    err = json.NewDecoder(file).Decode(&users)
+    if err != nil {
+        return nil, err
+    }
+    return users, nil
+}
+
+func writeUsers(users []models.DummyUser) error {
+    data, err := json.MarshalIndent(users, "", "  ")
+    if err != nil {
+        return err
+    }
+    return os.WriteFile(dummyUserFile, data, 0644)
+}
+
+func ListDummyUser() ([]models.DummyUser, error) {
+    return readUsers()
 }
 
 func GetDummyUser(id int) (models.DummyUser, error) {
-	var user models.DummyUser
-	err := database.GetDB().First(&user, id).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return models.DummyUser{}, err
-		}
-		return models.DummyUser{}, err
-	}
-	return user, nil
+    users, err := readUsers()
+    if err != nil {
+        return models.DummyUser{}, err
+    }
+    for _, user := range users {
+        if int(user.ID) == id {
+            return user, nil
+        }
+    }
+    return models.DummyUser{}, errors.New("user not found")
 }
 
 func CreateDummyUser(user *models.DummyUser) error {
-	err := database.GetDB().Create(user).Error
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+    users, err := readUsers()
+    if err != nil {
+        return err
+    }
+    // Assign a new ID
+    var maxID uint = 0
+    for _, u := range users {
+        if u.ID > maxID {
+            maxID = u.ID
+        }
+    }
+    user.ID = maxID + 1
+    users = append(users, *user)
+    return writeUsers(users)
 }
 
 func UpdateDummyUser(id int, updateData *models.DummyUser) (models.DummyUser, error) {
-	user, err := GetDummyUser(id)
-	if err != nil {
-		return models.DummyUser{}, err
-	}
-
-	// Update the user fields with the new data
-	if updateData.Name != "" {
-		user.Name = updateData.Name
-	}
-	if updateData.Email != "" {
-		user.Email = updateData.Email
-	}
-	// Add other fields as needed
-
-	err = database.GetDB().Model(&models.DummyUser{}).Where("id = ?", user.ID).Updates(user).Error
-	if err != nil {
-		return models.DummyUser{}, err
-	}
-
-	// Fetch the updated user to return
-	updatedUser, err := GetDummyUser(id)
-	if err != nil {
-		return models.DummyUser{}, err
-	}
-
-	return updatedUser, nil
+    users, err := readUsers()
+    if err != nil {
+        return models.DummyUser{}, err
+    }
+    for i, user := range users {
+        if int(user.ID) == id {
+            if updateData.Name != "" {
+                users[i].Name = updateData.Name
+            }
+            if updateData.Email != "" {
+                users[i].Email = updateData.Email
+            }
+            // Add other fields as needed
+            err = writeUsers(users)
+            return users[i], err
+        }
+    }
+    return models.DummyUser{}, errors.New("user not found")
 }
 
 func DeleteDummyUser(id int) error {
-	err := database.GetDB().Delete(&models.DummyUser{}, id).Error
-	if err != nil {
-		return err
-	}
-	return nil
+    users, err := readUsers()
+    if err != nil {
+        return err
+    }
+    newUsers := []models.DummyUser{}
+    found := false
+    for _, user := range users {
+        if int(user.ID) != id {
+            newUsers = append(newUsers, user)
+        } else {
+            found = true
+        }
+    }
+    if !found {
+        return errors.New("user not found")
+    }
+    return writeUsers(newUsers)
 }

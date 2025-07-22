@@ -3,8 +3,6 @@ package config
 import (
 	"os"
 	"testing"
-	// "taxi-service/database"
-    "taxi-service/models"
 )
 
 // SetupTestEnv sets up the test environment

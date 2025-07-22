@@ -3,7 +3,6 @@ package routes
 import (
     // "log"
     // "taxi-service/controllers"
-    // "taxi-service/database"
     // "taxi-service/models"
 
     "github.com/gofiber/fiber/v2"

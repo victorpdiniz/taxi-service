@@ -1,11 +1,11 @@
 package controllers
 
 import (
-    "strconv"
-    "taxi-service/models"
-    "taxi-service/services"
+	"strconv"
+	"taxi-service/models"
+	"taxi-service/services"
 
-    "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
 
 func ListDummyInfo(c *fiber.Ctx) error {
