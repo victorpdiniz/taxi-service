@@ -1,32 +1,35 @@
 package models
 
 import (
-    "time"
-    "gorm.io/gorm"
+	"time"
 )
 
 type Corrida struct {
-    gorm.Model
-    PassageiroID string         `json:"passageiro_id" gorm:"not null"`
-    MotoristaID  *string        `json:"motorista_id"`
-    Origem       string         `json:"origem" gorm:"not null"`
-    Destino      string         `json:"destino" gorm:"not null"`
-    Valor        float64        `json:"valor" gorm:"not null"`
-    Status       StatusCorrida  `json:"status" gorm:"not null;default:'solicitada'"`
-    SolicitadaEm time.Time      `json:"solicitada_em" gorm:"not null"`
-    AceitaEm     *time.Time     `json:"aceita_em"`
-    IniciadaEm   *time.Time     `json:"iniciada_em"`
-    FinalizadaEm *time.Time     `json:"finalizada_em"`
-    CanceladaEm  *time.Time     `json:"cancelada_em"`
-    DuracaoMinutos *int         `json:"duracao_minutos"` // Duração em minutos
+	Id               int       `json:"id"`
+	Data             string    `json:"data"`         //dia da corrida
+	Horario          time.Time `json:"horario"`      // horário de inicio
+	Tempo            int       `json:"tempo"`        // tempo para chegar ao destino
+	Valor            int       `json:"valor"`        // valor da corrida
+	Avaliacao        *int      `json:"avaliacao"`    // avaliacao 1, 2, 3, 4, 5 ou nil, * permite nil
+	Status           string    `json:"status"`       // andamento, finalizada ou cancelada
+	CPFMotorista     *int      `json:"cpfMotorista"` // chave estrangeira pro motorista responsavel
+	LocalEmbarque    string    `json:"localEmbarque"`
+	LocalDesembarque string    `json:"localDesembarque"`
+	ID               int
+	MotoristaID      int
+	PassageiroID     int
+	TempoEstimado    int     // minutos
+	TempoDecorrido   int     // minutos
+	Preco            float64 // valor da corrida
+	BonusAplicado    bool
+	DataInicio       time.Time
+	DataFim          *time.Time
 }
 
-type StatusCorrida string
-
 const (
-    CorridaSolicitada   StatusCorrida = "solicitada"
-    CorridaAceita       StatusCorrida = "aceita"
-    CorridaEmAndamento  StatusCorrida = "em_andamento"
-    CorridaFinalizada   StatusCorrida = "finalizada"
-    CorridaCancelada    StatusCorrida = "cancelada"
+	StatusEmAndamento              = "em_andamento"
+	StatusAtrasado                 = "atrasado"
+	StatusConcluidaAntecedencia    = "concluída com antecedência"
+	StatusConcluidaNoTempo         = "concluída no tempo previsto"
+	StatusCanceladaPorExcessoTempo = "cancelada por excesso de tempo"
 )

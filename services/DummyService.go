@@ -63,7 +63,7 @@ func CreateDummyUser(user *models.DummyUser) error {
         return err
     }
     // Assign a new ID
-    var maxID uint = 0
+    var maxID int = 0
     for _, u := range users {
         if u.ID > maxID {
             maxID = u.ID

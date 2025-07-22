@@ -1,20 +1,21 @@
 package models
 
 import (
-    "gorm.io/gorm"
+    "time"
 )
 
 type Motorista struct {
-    gorm.Model
-    Nome                    string         `json:"nome" gorm:"not null"`
-    Email                   string         `json:"email" gorm:"uniqueIndex;not null"`
-    Status                  StatusMotorista `json:"status" gorm:"not null;default:'disponivel'"`
-    NotificacoesHabilitadas bool           `json:"notificacoes_habilitadas" gorm:"default:true"`
+    ID                      uint      `json:"id"`
+    Nome                    string    `json:"nome"`
+    Email                   string    `json:"email"`
+    Telefone                string    `json:"telefone"`
+    Status                  string    `json:"status"`
+    NotificacoesHabilitadas bool      `json:"notificacoes_habilitadas"`
+    CreatedAt               time.Time `json:"created_at"`
+    UpdatedAt               time.Time `json:"updated_at"`
 }
 
-type StatusMotorista string
-
 const (
-    MotoristaDisponivel StatusMotorista = "disponivel"
-    MotoristaOcupado    StatusMotorista = "ocupado"
+    MotoristaDisponivel = "disponivel"
+    MotoristaOcupado    = "ocupado"
 )
