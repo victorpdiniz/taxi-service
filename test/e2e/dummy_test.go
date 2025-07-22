@@ -14,7 +14,7 @@ func TestGetDummyUserByID1(t *testing.T) {
     defer test.CleanupTestApp(t)
 
     // Test Get user with ID 1
-    resp := test.MakeRequest(t, app, "GET", "/dummy-users/1", nil)
+    resp := test.MakeRequest(t, app, "GET", "/dummy/1", nil)
     
     switch resp.StatusCode {
     case 200:
@@ -42,7 +42,7 @@ func TestFindOrCreateDummyUserID1(t *testing.T) {
     defer test.CleanupTestApp(t)
 
     // First, check what users exist
-    listResp := test.MakeRequest(t, app, "GET", "/dummy-users", nil)
+    listResp := test.MakeRequest(t, app, "GET", "/dummy", nil)
     assert.Equal(t, 200, listResp.StatusCode)
     
     var users []models.DummyUser
@@ -65,7 +65,7 @@ func TestFindOrCreateDummyUserID1(t *testing.T) {
         t.Logf("User with ID 1 already exists: Name='%s', Email='%s'", userID1.Name, userID1.Email)
         
         // Verify we can fetch it directly
-        resp := test.MakeRequest(t, app, "GET", "/dummy-users/1", nil)
+        resp := test.MakeRequest(t, app, "GET", "/dummy/1", nil)
         assert.Equal(t, 200, resp.StatusCode)
         
     } else if len(users) == 0 {
@@ -75,7 +75,7 @@ func TestFindOrCreateDummyUserID1(t *testing.T) {
             Email: "first@example.com",
         }
         
-        createResp := test.MakeRequest(t, app, "POST", "/dummy-users", createPayload)
+        createResp := test.MakeRequest(t, app, "POST", "/dummy", createPayload)
         assert.Equal(t, 200, createResp.StatusCode)
         
         var createdUser models.DummyUser
@@ -86,7 +86,7 @@ func TestFindOrCreateDummyUserID1(t *testing.T) {
         t.Log("Created first user with ID 1")
         
         // Verify it can be fetched
-        getResp := test.MakeRequest(t, app, "GET", "/dummy-users/1", nil)
+        getResp := test.MakeRequest(t, app, "GET", "/dummy/1", nil)
         assert.Equal(t, 200, getResp.StatusCode)
         
         var fetchedUser models.DummyUser
@@ -101,7 +101,7 @@ func TestFindOrCreateDummyUserID1(t *testing.T) {
         }
         
         // Try to get ID 1 directly (should fail)
-        resp := test.MakeRequest(t, app, "GET", "/dummy-users/1", nil)
+        resp := test.MakeRequest(t, app, "GET", "/dummy/1", nil)
         assert.Equal(t, 500, resp.StatusCode, "Should return 500 when user ID 1 doesn't exist")
         t.Log("Confirmed: User with ID 1 does not exist")
     }
@@ -114,7 +114,7 @@ func TestDummyUserJSONRepository(t *testing.T) {
     // Test the JSON repository pattern directly
     
     // 1. List all users (should work even if empty)
-    listResp := test.MakeRequest(t, app, "GET", "/dummy-users", nil)
+    listResp := test.MakeRequest(t, app, "GET", "/dummy", nil)
     assert.Equal(t, 200, listResp.StatusCode)
     
     var initialUsers []models.DummyUser
@@ -128,7 +128,7 @@ func TestDummyUserJSONRepository(t *testing.T) {
         Email: "test@example.com",
     }
     
-    createResp := test.MakeRequest(t, app, "POST", "/dummy-users", newUser)
+    createResp := test.MakeRequest(t, app, "POST", "/dummy", newUser)
     assert.Equal(t, 200, createResp.StatusCode)
     
     var createdUser models.DummyUser
@@ -139,7 +139,7 @@ func TestDummyUserJSONRepository(t *testing.T) {
     t.Logf("Created user with ID: %d", createdUser.ID)
     
     // 3. Verify user count increased
-    listResp2 := test.MakeRequest(t, app, "GET", "/dummy-users", nil)
+    listResp2 := test.MakeRequest(t, app, "GET", "/dummy", nil)
     assert.Equal(t, 200, listResp2.StatusCode)
     
     var afterCreateUsers []models.DummyUser
@@ -147,7 +147,7 @@ func TestDummyUserJSONRepository(t *testing.T) {
     assert.Equal(t, initialCount+1, len(afterCreateUsers), "User count should increase by 1")
     
     // 4. Get the specific user
-    getUserResp := test.MakeRequest(t, app, "GET", "/dummy-users/"+string(rune(createdUser.ID+'0')), nil)
+    getUserResp := test.MakeRequest(t, app, "GET", "/dummy/"+string(rune(createdUser.ID+'0')), nil)
     if createdUser.ID <= 9 { // Simple conversion for single digits
         assert.Equal(t, 200, getUserResp.StatusCode)
         

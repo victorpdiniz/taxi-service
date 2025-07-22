@@ -7,7 +7,7 @@ import (
 )
 
 func DummyRoutes(api fiber.Router) {
-	dummy := api.Group("/dummy-users")
+	dummy := api.Group("/dummy")
 
 	dummy.Get("/", controllers.ListDummyInfo)
 	dummy.Get("/:id", controllers.GetDummyInfo)
