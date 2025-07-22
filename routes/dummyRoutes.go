@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"your-app/controllers"
+	"taxi-service/controllers"
 )
 
 func DummyRoutes(api fiber.Router) {

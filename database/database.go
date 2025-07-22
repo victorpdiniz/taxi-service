@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"sync"
-	"your-app/models"
+	"taxi-service/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

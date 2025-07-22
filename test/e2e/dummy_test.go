@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"testing"
 
-	"your-app/models"
-	"your-app/test"
+	"taxi-service/models"
+	"taxi-service/test"
 
 	"github.com/stretchr/testify/assert"
 )

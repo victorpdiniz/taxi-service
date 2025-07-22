@@ -1,9 +1,8 @@
 package services
 
 import (
-	"your-app/database"
-	"your-app/models"
-
+    "taxi-service/database"
+    "taxi-service/models"
 	"gorm.io/gorm"
 )
 
