@@ -88,3 +88,7 @@ func (cc *CorridaController) CriarCorrida(c *fiber.Ctx) error {
 func (cc *CorridaController) ListarCorridas(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(services.GetCorridas())
 }
+
+func (cc *CorridaController) Service() *services.CorridaService {
+	return cc.service
+}

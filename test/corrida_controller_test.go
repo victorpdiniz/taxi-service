@@ -62,3 +62,32 @@ func TestFinalizarCorridaHandler_NoTempo(t *testing.T) {
 	assert.Equal(t, 100.0, corrida.Preco)
 	assert.False(t, corrida.BonusAplicado)
 }
+
+
+
+func TestAvaliarCorridaHandler(t *testing.T) {
+	app := fiber.New()
+	controller := controllers.NewCorridaController()
+	app.Post("/corridas/:id/avaliar", controller.AvaliarCorrida)
+
+	// Primeiro: adicionar uma corrida à slice global
+	// (poderia ser via POST /corridas, mas aqui é direto)
+	model := models.Corrida{
+		ID:          99,
+		MotoristaID: 1,
+		Preco:       50.0,
+		Status:      "em_andamento",
+	}
+	// Adiciona na slice (como mock)
+	// Se você tiver um método oficial para isso, use ele
+	controllersCorridaService := controller
+	controllersCorridaService.Service().AdicionarCorrida(model)
+
+	// Enviar a avaliação
+	body := `{"nota": 4}`
+	req := httptest.NewRequest("POST", "/corridas/99/avaliar", bytes.NewBuffer([]byte(body)))
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := app.Test(req)
+	assert.NoError(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+}
