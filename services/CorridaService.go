@@ -5,7 +5,15 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+
+	"errors"
+
+	"encoding/json"
+	"os"
+	"log"
 )
+
+var corridas []models.Corrida
 
 type CorridaService struct {
 	Corridas []models.Corrida // Mock de "banco de dados" em memória
@@ -58,4 +66,36 @@ func (s *CorridaService) FinalizarCorrida(ctx *fiber.Ctx, corrida *models.Corrid
 		corrida.Status = models.StatusConcluidaNoTempo
 		// Nenhuma penalização ou bônus
 	}
+}
+
+func AvaliarCorrida(id int, nota int) error {
+    for i := range corridas {
+        if corridas[i].ID == id {
+            corridas[i].Avaliacao = &nota
+            return nil
+        }
+    }
+    return errors.New("corrida não encontrada")
+}
+
+func (s *CorridaService) AdicionarCorrida(corrida models.Corrida) {
+	corridas = append(corridas, corrida)
+}
+
+func CarregarCorridasDoArquivo() {
+	file, err := os.Open("data/corridas.json")
+	if err != nil {
+		log.Println("Erro ao abrir arquivo JSON de corridas:", err)
+		return
+	}
+	defer file.Close()
+
+	err = json.NewDecoder(file).Decode(&corridas)
+	if err != nil {
+		log.Println("Erro ao fazer parse do JSON:", err)
+	}
+}
+
+func GetCorridas() []models.Corrida {
+	return corridas
 }

@@ -11,4 +11,8 @@ func SetupRegisterCorridaRoutes(app fiber.Router) {
 	app.Post("/corrida/monitorar", corridaController.MonitorarCorrida)
 	app.Post("/corrida/finalizar", corridaController.FinalizarCorrida)
 	app.Post("/corrida/cancelar-por-excesso-tempo", corridaController.CancelarPorExcessoTempo)
+	app.Post("/corridas/:id/avaliar", corridaController.AvaliarCorrida)
+	app.Post("/corridas", corridaController.CriarCorrida)
+	app.Get("/corridas", corridaController.ListarCorridas)
+
 }

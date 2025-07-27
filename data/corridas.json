@@ -1,0 +1,17 @@
+[
+  {
+    "ID": 1,
+    "MotoristaID": 101,
+    "PassageiroID": 201,
+    "Origem": "Rua A, Centro",
+    "Destino": "Avenida B, Bairro Novo",
+    "TempoEstimado": 20,
+    "TempoDecorrido": 18,
+    "Preco": 42.50,
+    "Status": "CONCLUIDA_NO_TEMPO",
+    "BonusAplicado": false,
+    "DataInicio": "2025-07-27T10:00:00Z",
+    "DataFim": "2025-07-27T10:20:00Z",
+    "Avaliacao": 5
+  }
+]
