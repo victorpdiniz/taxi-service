@@ -17,13 +17,13 @@ type NotificacaoCorrida struct {
     ID              uint              `json:"id"`
     MotoristaID     uint              `json:"motorista_id"`
     CorridaID       uint              `json:"corrida_id"`
-    PassageiroNome  string            `json:"passageiro_nome"`  // Corrigido de NomePassageiro
+    PassageiroNome  string            `json:"passageiro_nome"`
     Valor           float64           `json:"valor"`
-    DistanciaKm     float64           `json:"distancia_km"`     // Adicionado
-    TempoEstimado   string            `json:"tempo_estimado"`   // Adicionado
+    DistanciaKm     float64           `json:"distancia_km"`
+    TempoEstimado   string            `json:"tempo_estimado"`
     Origem          string            `json:"origem"`
     Destino         string            `json:"destino"`
-    Status          NotificacaoStatus `json:"status"`           // Tipado corretamente
+    Status          NotificacaoStatus `json:"status"`
     CreatedAt       time.Time         `json:"created_at"`
     UpdatedAt       time.Time         `json:"updated_at"`
     ExpiraEm        time.Time         `json:"expira_em"`
