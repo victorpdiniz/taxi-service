@@ -174,27 +174,23 @@ func TestAceitarNotificacaoCorrida(t *testing.T) {
     time.Sleep(100 * time.Millisecond)
 
     // Accept the notificacao
-    acceptPath := "/notificacoes/" + string(rune(createdNotificacao.ID+'0')) + "/motorista/555/accept"
+    acceptPath := fmt.Sprintf("/notificacoes/%d/motorista/555/accept", createdNotificacao.ID)
+    acceptResp := test.MakeRequest(t, app, "POST", acceptPath, nil)
     
-    // For IDs > 9, we need proper conversion
-    if createdNotificacao.ID <= 9 {
-        acceptResp := test.MakeRequest(t, app, "POST", acceptPath, nil)
+    switch acceptResp.StatusCode {
+    case 200:
+        var acceptResult map[string]interface{}
+        test.ParseResponseBody(t, acceptResp, &acceptResult)
         
-        switch acceptResp.StatusCode {
-        case 200:
-            var acceptResult map[string]interface{}
-            test.ParseResponseBody(t, acceptResp, &acceptResult)
-            
-            assert.Equal(t, "Notificacao accepted successfully", acceptResult["message"])
-            assert.Equal(t, float64(createdNotificacao.ID), acceptResult["notificacao_id"])
-            assert.Equal(t, float64(555), acceptResult["motorista_id"])
-            
-            t.Logf("Successfully accepted notificacao ID: %d", createdNotificacao.ID)
-        case 410:
-            t.Log("Notificacao expired before we could accept it - this can happen with 20s expiration")
-        default:
-            t.Logf("Accept returned status: %d", acceptResp.StatusCode)
-        }
+        assert.Equal(t, "Notificacao accepted successfully", acceptResult["message"])
+        assert.Equal(t, float64(createdNotificacao.ID), acceptResult["notificacao_id"])
+        assert.Equal(t, float64(555), acceptResult["motorista_id"])
+        
+        t.Logf("Successfully accepted notificacao ID: %d", createdNotificacao.ID)
+    case 410:
+        t.Log("Notificacao expired before we could accept it - this can happen with 20s expiration")
+    default:
+        t.Logf("Accept returned status: %d", acceptResp.StatusCode)
     }
 }
 
