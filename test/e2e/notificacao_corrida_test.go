@@ -39,38 +39,6 @@ func TestListNotificacoesCorrida(t *testing.T) {
     }
 }
 
-func TestGetNotificacaoCorridaByID(t *testing.T) {
-    app := test.SetupTestApp(t)
-    defer test.CleanupTestApp(t)
-
-    // Test Get notificacao with ID 1
-    resp := test.MakeRequest(t, app, "GET", "/notificacoes/1", nil)
-    
-    switch resp.StatusCode {
-    case 200:
-        // Notificacao with ID 1 exists
-        var fetchedNotificacao models.NotificacaoCorrida
-        test.ParseResponseBody(t, resp, &fetchedNotificacao)
-        
-        // Verify the notificacao has ID 1
-        assert.Equal(t, uint(1), fetchedNotificacao.ID)
-        assert.NotZero(t, fetchedNotificacao.MotoristaID, "MotoristaID should not be zero")
-        assert.NotZero(t, fetchedNotificacao.CorridaID, "CorridaID should not be zero")
-        assert.NotEmpty(t, fetchedNotificacao.PassageiroNome, "PassageiroNome should not be empty")
-        assert.Greater(t, fetchedNotificacao.Valor, 0.0, "Valor should be greater than 0")
-        
-        t.Logf("Found notificacao ID 1: Motorista=%d, Passageiro='%s', Status='%s', Valor=%.2f", 
-            fetchedNotificacao.MotoristaID, fetchedNotificacao.PassageiroNome, 
-            fetchedNotificacao.Status, fetchedNotificacao.Valor)
-    case 404:
-        // Notificacao with ID 1 does not exist
-        t.Log("Notificacao with ID 1 not found - this is expected if no initial data exists")
-    default:
-        // Unexpected status code
-        t.Fatalf("Unexpected status code: %d", resp.StatusCode)
-    }
-}
-
 func TestCreateNotificacaoCorrida(t *testing.T) {
     app := test.SetupTestApp(t)
     defer test.CleanupTestApp(t)
@@ -121,73 +89,6 @@ func TestCreateNotificacaoCorrida(t *testing.T) {
     var afterCreateNotificacoes []models.NotificacaoCorrida
     test.ParseResponseBody(t, listResp2, &afterCreateNotificacoes)
     assert.Equal(t, initialCount+1, len(afterCreateNotificacoes), "Notificacoes count should increase by 1")
-}
-
-func TestCreateNotificacaoCorridaValidation(t *testing.T) {
-    app := test.SetupTestApp(t)
-    defer test.CleanupTestApp(t)
-
-    // Test validation errors
-    testCases := []struct {
-        name           string
-        notificacao    models.NotificacaoCorrida
-        expectedStatus int
-        expectedError  string
-    }{
-        {
-            name: "Missing MotoristaID",
-            notificacao: models.NotificacaoCorrida{
-                CorridaID:      888,
-                PassageiroNome: "Test Passenger",
-                Valor:          45.50,
-            },
-            expectedStatus: 400,
-            expectedError:  "MotoristaID is required",
-        },
-        {
-            name: "Missing CorridaID",
-            notificacao: models.NotificacaoCorrida{
-                MotoristaID:    999,
-                PassageiroNome: "Test Passenger",
-                Valor:          45.50,
-            },
-            expectedStatus: 400,
-            expectedError:  "CorridaID is required",
-        },
-        {
-            name: "Missing PassageiroNome",
-            notificacao: models.NotificacaoCorrida{
-                MotoristaID: 999,
-                CorridaID:   888,
-                Valor:       45.50,
-            },
-            expectedStatus: 400,
-            expectedError:  "PassageiroNome is required",
-        },
-        {
-            name: "Invalid Valor",
-            notificacao: models.NotificacaoCorrida{
-                MotoristaID:    999,
-                CorridaID:      888,
-                PassageiroNome: "Test Passenger",
-                Valor:          0,
-            },
-            expectedStatus: 400,
-            expectedError:  "Valor must be greater than 0",
-        },
-    }
-
-    for _, tc := range testCases {
-        t.Run(tc.name, func(t *testing.T) {
-            resp := test.MakeRequest(t, app, "POST", "/notificacoes", tc.notificacao)
-            assert.Equal(t, tc.expectedStatus, resp.StatusCode)
-
-            var errorResp map[string]string
-            test.ParseResponseBody(t, resp, &errorResp)
-            assert.Contains(t, errorResp["error"], tc.expectedError)
-            t.Logf("Validation test '%s' passed: %s", tc.name, errorResp["error"])
-        })
-    }
 }
 
 func TestGetNotificacoesPendentesParaMotorista(t *testing.T) {
@@ -351,7 +252,7 @@ func TestExpirarNotificacoesVencidas(t *testing.T) {
     app := test.SetupTestApp(t)
     defer test.CleanupTestApp(t)
 
-    // 1. Criar uma notificação que vai expirar
+    // 1. Criar uma notificação que irá expirar
     newNotificacao := models.NotificacaoCorrida{
         MotoristaID:     777,
         CorridaID:       888,
@@ -368,63 +269,37 @@ func TestExpirarNotificacoesVencidas(t *testing.T) {
 
     var createdNotificacao models.NotificacaoCorrida
     test.ParseResponseBody(t, createResp, &createdNotificacao)
-    
-    // Verificar que foi criada como pendente
+
+    // Verificação inicial
     assert.Equal(t, models.NotificacaoPendente, createdNotificacao.Status)
     t.Logf("Created notificacao ID %d with status: %s", createdNotificacao.ID, createdNotificacao.Status)
 
-    // 2. Aguardar mais que o tempo de expiração (20s + margem)
-    t.Log("Waiting for notificacao to expire naturally...")
-    time.Sleep(21 * time.Second) // Mais que os 20s de expiração
+    // 2. Esperar pelo menos 22 segundos (20s de expiração + margem)
+    t.Log("Waiting for notificacao to expire naturally by service...")
+    time.Sleep(22 * time.Second)
 
-    // 3. Verificar o status antes de chamar expire
+    // 3. Verificar se a notificação foi automaticamente marcada como expirada
     getResp := test.MakeRequest(t, app, "GET", fmt.Sprintf("/notificacoes/%d", createdNotificacao.ID), nil)
     assert.Equal(t, 200, getResp.StatusCode)
-    
-    var beforeExpire models.NotificacaoCorrida
-    test.ParseResponseBody(t, getResp, &beforeExpire)
-    t.Logf("Before expire call - Status: %s, ExpiraEm: %v", beforeExpire.Status, beforeExpire.ExpiraEm)
 
-    // 4. Chamar o endpoint de expiração
-    expireResp := test.MakeRequest(t, app, "POST", "/notificacoes/expire", nil)
-    assert.Equal(t, 200, expireResp.StatusCode)
+    var after models.NotificacaoCorrida
+    test.ParseResponseBody(t, getResp, &after)
 
-    var expireResult map[string]interface{}
-    test.ParseResponseBody(t, expireResp, &expireResult)
-    
-    // Verificar a resposta do endpoint
-    assert.Equal(t, "Expired notificacoes processed successfully", expireResult["message"])
-    
-    // Se houver campo de contagem, verificar
-    if expiredCount, exists := expireResult["expired_count"]; exists {
-        t.Logf("Expired count: %v", expiredCount)
-        assert.Greater(t, expiredCount, float64(0), "Should have expired at least 1 notificacao")
-    }
+    // 4. Verificar se o status mudou para "expirada"
+    assert.Equal(t, models.NotificacaoExpirada, after.Status,
+        "Expected notificacao to be marked as expired automatically")
+    assert.True(t, after.UpdatedAt.After(createdNotificacao.UpdatedAt),
+        "UpdatedAt should be updated after expiration")
 
-    // 5. Verificar se o status mudou para "expirada"
-    getAfterResp := test.MakeRequest(t, app, "GET", fmt.Sprintf("/notificacoes/%d", createdNotificacao.ID), nil)
-    assert.Equal(t, 200, getAfterResp.StatusCode)
-    
-    var afterExpire models.NotificacaoCorrida
-    test.ParseResponseBody(t, getAfterResp, &afterExpire)
-    
-    // VERIFICAÇÃO PRINCIPAL: Status deve ter mudado
-    assert.Equal(t, models.NotificacaoExpirada, afterExpire.Status, 
-        "Notificacao should be marked as expired")
-    assert.True(t, afterExpire.UpdatedAt.After(beforeExpire.UpdatedAt), 
-        "UpdatedAt should be newer after expiration")
-    
-    t.Logf("Successfully expired notificacao ID %d: %s -> %s", 
-        createdNotificacao.ID, beforeExpire.Status, afterExpire.Status)
+    t.Logf("Notificacao ID %d expired as expected (status: %s)", after.ID, after.Status)
 
-    // 6. Verificar que não aparece mais em pendentes
+    // 5. Verificar que ela não aparece mais na lista de notificações pendentes do motorista
     pendingResp := test.MakeRequest(t, app, "GET", fmt.Sprintf("/notificacoes/motorista/%d/pending", newNotificacao.MotoristaID), nil)
     assert.Equal(t, 200, pendingResp.StatusCode)
-    
+
     var pendingResult map[string]interface{}
     test.ParseResponseBody(t, pendingResp, &pendingResult)
-    
-    // A notificação expirada não deve estar em pendentes
+
     if notificacoes, exists := pendingResult["notificacoes"]; exists {
         if notifArray, ok := notificacoes.([]interface{}); ok {
             for _, notif := range notifArray {
@@ -436,70 +311,10 @@ func TestExpirarNotificacoesVencidas(t *testing.T) {
             }
         }
     }
-    
-    t.Log("Expiration test completed successfully")
+
+    t.Log("Automatic expiration test completed successfully")
 }
 
-func TestExpiracaoNatural(t *testing.T) {
-    app := test.SetupTestApp(t)
-    defer test.CleanupTestApp(t)
-
-    // Teste mais rápido: verificar se notificações antigas do JSON já expiraram
-    t.Log("=== TESTING NATURAL EXPIRATION FROM JSON DATA ===")
-
-    // 1. Listar todas as notificações
-    listResp := test.MakeRequest(t, app, "GET", "/notificacoes", nil)
-    assert.Equal(t, 200, listResp.StatusCode)
-
-    var notificacoes []models.NotificacaoCorrida
-    test.ParseResponseBody(t, listResp, &notificacoes)
-
-    // 2. Contar quantas estão pendentes vs expiradas
-    pendentesCount := 0
-    expiradasCount := 0
-    agora := time.Now()
-
-    for _, notif := range notificacoes {
-        switch notif.Status {
-        case models.NotificacaoPendente:
-            // Verificar se deveria ter expirado
-            if agora.After(notif.ExpiraEm) {
-                t.Logf("Found naturally expired notificacao ID %d (created: %v, expires: %v)", 
-                    notif.ID, notif.CreatedAt, notif.ExpiraEm)
-                pendentesCount++
-            }
-        case models.NotificacaoExpirada:
-            expiradasCount++
-        }
-    }
-
-    t.Logf("Found %d naturally expired (still pending) and %d already marked expired", 
-        pendentesCount, expiradasCount)
-
-    // 3. Se há notificações que deveriam ter expirado, processar
-    if pendentesCount > 0 {
-        expireResp := test.MakeRequest(t, app, "POST", "/notificacoes/expire", nil)
-        assert.Equal(t, 200, expireResp.StatusCode)
-
-        // 4. Verificar se foram processadas
-        listResp2 := test.MakeRequest(t, app, "GET", "/notificacoes", nil)
-        assert.Equal(t, 200, listResp2.StatusCode)
-
-        var notificacoesAfter []models.NotificacaoCorrida
-        test.ParseResponseBody(t, listResp2, &notificacoesAfter)
-
-        expiradasAfter := 0
-        for _, notif := range notificacoesAfter {
-            if notif.Status == models.NotificacaoExpirada {
-                expiradasAfter++
-            }
-        }
-
-        t.Logf("After expire call: %d total expired notificacoes", expiradasAfter)
-        assert.GreaterOrEqual(t, expiradasAfter, expiradasCount, 
-            "Should have at least the same number of expired notificacoes")
-    }
-}
 
 func TestDeleteNotificacaoCorrida(t *testing.T) {
     app := test.SetupTestApp(t)

@@ -86,12 +86,11 @@ func GetNotificacaoCorrida(id uint) (models.NotificacaoCorrida, error) {
 
 // CreateNotificacaoCorrida - Cria nova notificação para motorista
 func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
-    
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return err
     }
-    
+
     // Atribuir novo ID (máximo + 1)
     var maxID uint = 0
     for _, n := range notificacoes {
@@ -100,21 +99,48 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
         }
     }
     notificacao.ID = maxID + 1
-    
+
     // Definir valores padrão
+    now := time.Now()
     notificacao.Status = models.NotificacaoPendente
-    notificacao.CreatedAt = time.Now()
-    notificacao.UpdatedAt = time.Now()
-    notificacao.ExpiraEm = time.Now().Add(20 * time.Second) // Expira em 20 segundos
-    
-    
+    notificacao.CreatedAt = now
+    notificacao.UpdatedAt = now
+    notificacao.ExpiraEm = now.Add(20 * time.Second) // Expira em 20 segundos
+
     // Adicionar nova notificação à lista
     notificacoes = append(notificacoes, *notificacao)
-    
+
     if err := writeNotificacoesCorrida(notificacoes); err != nil {
         return err
     }
-    
+
+    // Iniciar rotina para expiração automática após 21 segundos
+    go func(id uint) {
+        time.Sleep(21 * time.Second) // 20s + 1s de margem
+
+        // Ler novamente as notificações
+        notificacoes, err := readNotificacoesCorrida()
+        if err != nil {
+            // Idealmente logar erro, mas estamos em goroutine
+            return
+        }
+
+        updated := false
+        now := time.Now()
+        for i, n := range notificacoes {
+            if n.ID == id && n.Status == models.NotificacaoPendente && now.After(n.ExpiraEm) {
+                notificacoes[i].Status = models.NotificacaoExpirada
+                notificacoes[i].UpdatedAt = now
+                updated = true
+                break
+            }
+        }
+
+        if updated {
+            _ = writeNotificacoesCorrida(notificacoes) // Ignorar erro por simplicidade
+        }
+    }(notificacao.ID)
+
     return nil
 }
 
