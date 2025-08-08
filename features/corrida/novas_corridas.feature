@@ -53,5 +53,6 @@ Feature: Notificação de novas corridas por perto
     And o status está "ocupado"
     When ativa a opção "Receber notificações de novas corridas"
     Then o status deve ser alterado para "disponível"
+    And deve receber notificações de novas corridas
 
   
