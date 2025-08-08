@@ -55,4 +55,7 @@ Feature: Notificação de novas corridas por perto
     Then o status deve ser alterado para "disponível"
     And deve receber notificações de novas corridas
 
-  
+  Scenario: Motorista não recebe notificações fora do raio
+    Given uma corrida é solicitada por "Ana Costa"
+    When estou num raio maior que 2 km da corrida
+    Then não deve receber nenhuma notificação
