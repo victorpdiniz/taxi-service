@@ -9,8 +9,8 @@ Feature: Notificação de novas corridas por perto
     And está com o status "disponível"
 
   Scenario: Receber notificação de corrida próxima quando estiver disponível
-    Given uma corrida é solicitada dentro de um raio de "2" quilômetros
-    When uma nova corrida é solicitada por um passageiro próximo
+    Given uma corrida é solicitada por "Maria Silva" 
+    When estou num raio menor que 2 km da corrida
     Then deve receber uma notificação contendo:
       | tempo       | 23 minutos           |
       | distância   | 1.5 km               |
@@ -23,6 +23,7 @@ Feature: Notificação de novas corridas por perto
     When passa 20 segundos sem interagir com a notificação
     Then a notificação deve desaparecer automaticamente
     And o status deve permanecer como "disponível"
+    And outro motorista pode aceitar a corrida
 
   Scenario: Corrida aceita é registrada no histórico
     Given recebe uma notificação de corrida
@@ -32,21 +33,25 @@ Feature: Notificação de novas corridas por perto
 
   Scenario: Motorista ocupado não recebe notificações
     Given o status está "ocupado"
-    When uma nova corrida é solicitada próxima
-    Then não deve receber notificação
+    When uma corrida é solicitada por "Carlos Pereira"
+    And estou num raio menor que 2 km da corrida
+    Then não deve receber nenhuma notificação
 
   Scenario: Recusar corrida mantém disponibilidade
     Given recebe uma notificação de corrida
     When clica em "Recusar"
     Then o status deve permanecer "disponível"
+    And outro motorista pode aceitar a corrida
 
   Scenario: Desativar notificações altera status
     Given está recebendo notificações
     When desativa a opção "Receber notificações de novas corridas"
     Then o status deve ser alterado para "ocupado"
 
-  Scenario: Reativar notificações volta status disponível
+  Scenario: Ativar notificações altera status
     Given as notificações estão desativadas
     And o status está "ocupado"
     When ativa a opção "Receber notificações de novas corridas"
     Then o status deve ser alterado para "disponível"
+
+  

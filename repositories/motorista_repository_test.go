@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"taxi_service/models"
+	"taxi-service/models"
 )
 
 func TestJSONMotoristaRepository(t *testing.T) {
@@ -129,7 +129,7 @@ func TestJSONMotoristaRepository(t *testing.T) {
 	})
 
 	t.Run("Erro ao deletar motorista inexistente", func(t *testing.T) {
-		err := repo.Deletar("999")
+		err := repo.Deletar("1")
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "motorista não encontrado")
 	})
