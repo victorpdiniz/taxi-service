@@ -36,5 +36,5 @@ func main() {
 
 	log.Println(gopherDraw)
 
-	app.Listen(":3000")
+	log.Fatal(app.Listen(":3000"))
 }

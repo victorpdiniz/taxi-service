@@ -1,61 +1,99 @@
 package services
 
 import (
+	"fmt"
+	"math/rand"
+	"sync"
 	"time"
 	"your-app/models"
-
-	"github.com/gofiber/fiber/v2"
 )
 
+// CorridaService gerencia a lógica de negócio das corridas.
 type CorridaService struct {
-	Corridas []models.Corrida // Mock de "banco de dados" em memória
+	corridas map[int]*models.Corrida
+	mutex    sync.RWMutex
+	nextID   int
 }
 
-// NotificacaoService é responsável por enviar notificações
-func NotificarPassageiro(ctx *fiber.Ctx, passageiroID int, mensagem string) error {
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"notificacao": mensagem, "passageiro_id": passageiroID})
-}
-
-func NotificarMotorista(ctx *fiber.Ctx, motoristaID int, mensagem string) error {
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"notificacao": mensagem, "motorista_id": motoristaID})
-}
-
-func AplicarBonus(corrida *models.Corrida) {
-	// Aplica 10% de bônus sobre o preço da corrida, se o campo existir
-	if corrida != nil {
-		corrida.Preco = corrida.Preco + (corrida.Preco * 0.10)
-	}
-
-}
-
-func (s *CorridaService) VerificarTempoCorrida(ctx *fiber.Ctx, corrida *models.Corrida) {
-	diferenca := corrida.TempoDecorrido - corrida.TempoEstimado
-
-	if corrida.Status == models.StatusEmAndamento {
-		if diferenca > 0 && diferenca <= 15 {
-			corrida.Status = models.StatusAtrasado
-			NotificarPassageiro(ctx, corrida.PassageiroID, "O motorista está atrasado.")
-			NotificarMotorista(ctx, corrida.MotoristaID, "Tag: atrasado")
-		} else if diferenca > 15 {
-			corrida.Status = models.StatusCanceladaPorExcessoTempo
-			NotificarMotorista(ctx, corrida.MotoristaID, "Corrida cancelada por excesso de tempo")
-			// Corrida cancelada: Esperar Implementação de Ayres
-		}
+// NewCorridaService cria uma nova instância de CorridaService.
+func NewCorridaService() *CorridaService {
+	return &CorridaService{
+		corridas: make(map[int]*models.Corrida),
+		nextID:   1,
 	}
 }
 
-func (s *CorridaService) FinalizarCorrida(ctx *fiber.Ctx, corrida *models.Corrida) {
-	diferenca := corrida.TempoDecorrido - corrida.TempoEstimado
+// CriarNovaCorrida cria uma nova corrida e inicia a simulação.
+func (s *CorridaService) CriarNovaCorrida(corridaInput models.Corrida) (*models.Corrida, error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	corrida := &corridaInput
+	corrida.ID = s.nextID
+	s.nextID++
+	corrida.Status = models.StatusProcurandoMotorista
+	corrida.DataInicio = time.Now()
+
+	s.corridas[corrida.ID] = corrida
+
+	// Inicia a simulação em uma nova goroutine
+	go s.simularCorrida(corrida)
+
+	return corrida, nil
+}
+
+// GetCorridaPorID busca uma corrida pelo seu ID.
+func (s *CorridaService) GetCorridaPorID(id int) (*models.Corrida, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	corrida, exists := s.corridas[id]
+	if !exists {
+		return nil, fmt.Errorf("corrida com ID %d não encontrada", id)
+	}
+	return corrida, nil
+}
+
+// simularCorrida executa a lógica de simulação de uma corrida.
+func (s *CorridaService) simularCorrida(corrida *models.Corrida) {
+	// 1. Procurando motorista
+	fmt.Printf("Corrida %d: Procurando motorista...\n", corrida.ID)
+	time.Sleep(5 * time.Second) // Simula o tempo de busca
+
+	s.mutex.Lock()
+	corrida.Status = models.StatusMotoristaEncontrado
+	corrida.MotoristaID = rand.Intn(100) + 1 // Atribui um ID de motorista aleatório
+	fmt.Printf("Corrida %d: Motorista %d encontrado. A caminho!\n", corrida.ID, corrida.MotoristaID)
+	s.mutex.Unlock()
+
+	// 2. Motorista a caminho
+	time.Sleep(5 * time.Second) // Simula o tempo de chegada do motorista
+
+	s.mutex.Lock()
+	corrida.Status = models.StatusCorridaIniciada
+	fmt.Printf("Corrida %d: Corrida iniciada.\n", corrida.ID)
+	s.mutex.Unlock()
+
+	// 3. Corrida em andamento
+	// Usaremos o tempo estimado em segundos para a simulação
+	tempoEstimadoSegundos := time.Duration(corrida.TempoEstimado) * time.Second
+	tempoInicioCorrida := time.Now()
+	
+	for time.Since(tempoInicioCorrida) < tempoEstimadoSegundos {
+		time.Sleep(1 * time.Second)
+		s.mutex.Lock()
+		corrida.TempoDecorrido = int(time.Since(tempoInicioCorrida).Seconds())
+		s.mutex.Unlock()
+	}
+
+
+	// 4. Finalizar a corrida
+	s.mutex.Lock()
 	now := time.Now()
 	corrida.DataFim = &now
-
-	if diferenca < 0 {
-		corrida.Status = models.StatusConcluidaAntecedencia
-		NotificarMotorista(ctx, corrida.MotoristaID, "Parabéns! Corrida concluída com antecedência.")
-		AplicarBonus(corrida)
-		corrida.BonusAplicado = true
-	} else if diferenca == 0 || diferenca > 0 && diferenca <= 15 {
-		corrida.Status = models.StatusConcluidaNoTempo
-		// Nenhuma penalização ou bônus
-	}
+	corrida.TempoDecorrido = int(tempoEstimadoSegundos.Seconds())
+	// Lógica de bônus/status final pode ser adicionada aqui se necessário
+	corrida.Status = models.StatusConcluidaNoTempo
+	fmt.Printf("Corrida %d: Corrida finalizada.\n", corrida.ID)
+	s.mutex.Unlock()
 }

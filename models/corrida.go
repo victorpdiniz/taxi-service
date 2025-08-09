@@ -4,7 +4,10 @@ import "time"
 
 // CorridaStatus representa o status de uma corrida
 const (
-	StatusEmAndamento              = "em_andamento"
+	StatusProcurandoMotorista      = "procurando_motorista"
+	StatusMotoristaEncontrado      = "motorista_encontrado"
+	StatusCorridaIniciada          = "corrida_iniciada"
+	StatusEmAndamento              = "em_andamento" // Mantido para compatibilidade
 	StatusAtrasado                 = "atrasado"
 	StatusConcluidaAntecedencia    = "concluída com antecedência"
 	StatusConcluidaNoTempo         = "concluída no tempo previsto"

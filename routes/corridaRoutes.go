@@ -2,12 +2,19 @@ package routes
 
 import (
 	"your-app/controllers"
+	"your-app/services"
+
 	"github.com/gofiber/fiber/v2"
 )
 
-func RegisterCorridaRoutes(app fiber.Router) {
-	corridaController := controllers.NewCorridaController()
-	app.Post("/corrida/monitorar", corridaController.MonitorarCorrida)
-	app.Post("/corrida/finalizar", corridaController.FinalizarCorrida)
-	app.Post("/corrida/cancelar-por-excesso-tempo", corridaController.CancelarPorExcessoTempo)
+// SetupCorridaRoutes configura as rotas relacionadas a corridas.
+func SetupCorridaRoutes(api fiber.Router, corridaService *services.CorridaService) {
+	corridaController := controllers.NewCorridaController(corridaService)
+
+	corridaGroup := api.Group("/corrida")
+	corridaGroup.Post("/", corridaController.CriarCorrida)
+	corridaGroup.Post("/monitorar", corridaController.MonitorarCorrida)
+	corridaGroup.Options("/monitorar", func(c *fiber.Ctx) error {
+		return c.SendStatus(200)
+	})
 }

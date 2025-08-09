@@ -50,7 +50,7 @@ func (s *CorridaServiceSTUB) FinalizarCorridaSTUB(_ interface{}, corrida *models
 
 	if diferenca < 0 {
 		corrida.Status = models.StatusConcluidaAntecedencia
-		AplicarBonus(corrida)
+		AplicarBonusSTUB(corrida)
 		corrida.BonusAplicado = true
 	} else if diferenca == 0 || diferenca > 0 && diferenca <= 15 {
 		corrida.Status = models.StatusConcluidaNoTempo

@@ -7,43 +7,38 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// CorridaController gerencia as requisições HTTP para corridas.
 type CorridaController struct {
 	service *services.CorridaService
 }
 
-func NewCorridaController() *CorridaController {
-	return &CorridaController{service: &services.CorridaService{}}
+// NewCorridaController cria uma nova instância de CorridaController.
+func NewCorridaController(service *services.CorridaService) *CorridaController {
+	return &CorridaController{service: service}
 }
 
-// POST /corrida/monitorar
+// CriarCorrida (POST /corrida) cria uma nova corrida.
+func (cc *CorridaController) CriarCorrida(c *fiber.Ctx) error {
+	var corridaInput models.Corrida
+	if err := c.BodyParser(&corridaInput); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Não foi possível decodificar o corpo da requisição"})
+	}
+
+	// Validação básica
+	if corridaInput.PassageiroID == 0 || corridaInput.TempoEstimado <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "PassageiroID e TempoEstimado são obrigatórios"})
+	}
+
+	corrida, err := cc.service.CriarNovaCorrida(corridaInput)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(corrida)
+}
+
+// GetCorrida (GET /corrida/:id) busca o status de uma corrida.
+// MonitorarCorrida (POST /corrida/monitorar) monitora uma corrida.
 func (cc *CorridaController) MonitorarCorrida(c *fiber.Ctx) error {
-	var corrida models.Corrida
-	if err := c.BodyParser(&corrida); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	cc.service.VerificarTempoCorrida(c, &corrida)
-	return c.Status(fiber.StatusOK).JSON(corrida)
-}
-
-// POST /corrida/finalizar
-func (cc *CorridaController) FinalizarCorrida(c *fiber.Ctx) error {
-	var corrida models.Corrida
-	if err := c.BodyParser(&corrida); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	cc.service.FinalizarCorrida(c, &corrida)
-	return c.Status(fiber.StatusOK).JSON(corrida)
-}
-
-// POST /corrida/cancelar-por-excesso-tempo
-func (cc *CorridaController) CancelarPorExcessoTempo(c *fiber.Ctx) error {
-	var corrida models.Corrida
-	if err := c.BodyParser(&corrida); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	if corrida.TempoDecorrido-corrida.TempoEstimado > 15 {
-		corrida.Status = models.StatusCanceladaPorExcessoTempo
-		services.NotificarMotorista(c, corrida.MotoristaID, "Corrida cancelada por excesso de tempo")
-	}
-	return c.Status(fiber.StatusOK).JSON(corrida)
+	return c.SendStatus(fiber.StatusOK)
 }
