@@ -1,7 +1,7 @@
 Feature: Notificação de novas corridas por perto
-  Como um motorista
-  Eu quero receber notificações de novas corridas próximas
-  Para que eu possa aceitar corridas 
+  As a motorista
+  I want to receber notificações de novas corridas próximas
+  So that eu possa aceitar corridas 
 
   Background:
     Given que o motorista de nome “João” está logado
@@ -23,7 +23,7 @@ Feature: Notificação de novas corridas por perto
     When passa 20 segundos sem interagir com a notificação
     Then a notificação deve desaparecer automaticamente
     And o status deve permanecer como "disponível"
-    And outro motorista pode aceitar a corrida
+    And outro motorista deve receber a notificação
 
   Scenario: Corrida aceita é registrada no histórico
     Given recebe uma notificação de corrida
@@ -59,3 +59,12 @@ Feature: Notificação de novas corridas por perto
     Given uma corrida é solicitada por "Ana Costa"
     When estou num raio maior que 2 km da corrida
     Then não deve receber nenhuma notificação
+
+  Scenario: Motoristas disponíveis são listados
+    Given o status está "disponível"
+    When solicito a lista de motoristas disponíveis
+    Then deve retornar uma lista contendo:
+      | nome        | João                |
+      | localização | Rua A, 123         |
+      | status      | disponível          |
+  
