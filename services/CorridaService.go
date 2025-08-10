@@ -16,10 +16,13 @@ type CorridaService struct {
 
 // NewCorridaService cria uma nova instância de CorridaService.
 func NewCorridaService() *CorridaService {
-	return &CorridaService{
+	service := &CorridaService{
 		corridas: make(map[int]*models.Corrida),
 		nextID:   1,
 	}
+	// Inicia o monitoramento em background
+	go service.MonitorarCorridasAtivas()
+	return service
 }
 
 // CriarNovaCorrida cria uma nova corrida e a prepara para ser aceita.
@@ -32,6 +35,9 @@ func (s *CorridaService) CriarNovaCorrida(corridaInput models.Corrida) (*models.
 	s.nextID++
 	corrida.Status = models.StatusProcurandoMotorista
 	corrida.DataInicio = time.Now()
+	// Em um sistema real, o tempo estimado seria calculado com base na distância, trânsito, etc.
+	// Para este exemplo, vamos fixar em 1 minuto para facilitar os testes.
+	corrida.TempoEstimado = 1 // minutos
 
 	s.corridas[corrida.ID] = corrida
 
@@ -104,7 +110,7 @@ func (s *CorridaService) CancelarCorrida(corridaID int) error {
 	return nil
 }
 
-// FinalizarCorrida finaliza uma corrida com sucesso.
+// FinalizarCorrida finaliza uma corrida, aplicando a lógica de tempo.
 func (s *CorridaService) FinalizarCorrida(corridaID int) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -114,10 +120,57 @@ func (s *CorridaService) FinalizarCorrida(corridaID int) error {
 		return fmt.Errorf("corrida com ID %d não encontrada", corridaID)
 	}
 
-	corrida.Status = models.StatusConcluidaNoTempo // Ou outra lógica para determinar o status final
+	duracaoReal := time.Since(corrida.DataInicio)
+	duracaoEstimada := time.Duration(corrida.TempoEstimado) * time.Minute
+
+	if duracaoReal < duracaoEstimada {
+		corrida.Status = models.StatusConcluidaAntecedencia
+		corrida.BonusAplicado = true
+		fmt.Printf("Corrida %d: Finalizada com antecedência! Bônus aplicado.\n", corrida.ID)
+	} else if duracaoReal > duracaoEstimada+time.Duration(15)*time.Minute { // Limite de tolerância para cancelamento
+		corrida.Status = models.StatusCanceladaPorExcessoTempo
+		fmt.Printf("Corrida %d: Cancelada por excesso de tempo.\n", corrida.ID)
+	} else if duracaoReal > duracaoEstimada {
+		corrida.Status = models.StatusAtrasado
+		fmt.Printf("Corrida %d: Finalizada com atraso.\n", corrida.ID)
+	} else {
+		corrida.Status = models.StatusConcluidaNoTempo
+		fmt.Printf("Corrida %d: Finalizada no tempo previsto.\n", corrida.ID)
+	}
+
 	now := time.Now()
     corrida.DataFim = &now
-	fmt.Printf("Corrida %d: Finalizada com sucesso.\n", corrida.ID)
 
 	return nil
+}
+
+// MonitorarCorridasAtivas é um processo em background para verificar status.
+func (s *CorridaService) MonitorarCorridasAtivas() {
+	// Ticker para verificar a cada 30 segundos
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		s.mutex.Lock()
+		for _, corrida := range s.corridas {
+			// Apenas verifica corridas que estão em andamento
+			if corrida.Status == models.StatusMotoristaEncontrado || corrida.Status == models.StatusCorridaIniciada {
+				duracaoReal := time.Since(corrida.DataInicio)
+				duracaoEstimada := time.Duration(corrida.TempoEstimado) * time.Minute
+
+				// Lógica para cancelamento automático
+				if duracaoReal > duracaoEstimada+time.Duration(15)*time.Minute {
+					corrida.Status = models.StatusCanceladaPorExcessoTempo
+					now := time.Now()
+    				corrida.DataFim = &now
+					fmt.Printf("Corrida %d: Cancelada automaticamente por excesso de tempo.\n", corrida.ID)
+				} else if duracaoReal > duracaoEstimada && corrida.Status != models.StatusAtrasado {
+					// Lógica para marcar como atrasado
+					corrida.Status = models.StatusAtrasado
+					fmt.Printf("Corrida %d: Marcada como atrasada.\n", corrida.ID)
+				}
+			}
+		}
+		s.mutex.Unlock()
+	}
 }
