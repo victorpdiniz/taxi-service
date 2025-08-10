@@ -33,13 +33,22 @@
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/corrida/monitorar', {
+      // Define um ID de passageiro fixo para a demonstração
+      const passageiroId = 1;
+
+      const response = await axios.post('http://localhost:3000/api/corrida', {
+        passageiroId: passageiroId, 
         origem: `${originCoords.lat}, ${originCoords.lng}`,
         destino: `${destinationCoords.lat}, ${destinationCoords.lng}`,
+        // O backend irá calcular o tempo estimado, então não precisamos enviar
       });
       
-      console.log('Corrida iniciada:', response.data);
-      navigate('/corrida');
+      const corrida = response.data;
+      console.log('Corrida criada com sucesso! ID da Corrida:', corrida.ID);
+      alert(`Corrida criada com sucesso! O ID da sua corrida é: ${corrida.ID}`);
+
+      // Navega para a página da corrida específica
+      navigate(`/corrida/${corrida.ID}`);
 
     } catch (error) {
       console.error('Erro ao iniciar a corrida:', error);

@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"math/rand"
 	"sync"
 	"time"
 	"your-app/models"
@@ -23,7 +22,7 @@ func NewCorridaService() *CorridaService {
 	}
 }
 
-// CriarNovaCorrida cria uma nova corrida e inicia a simulação.
+// CriarNovaCorrida cria uma nova corrida e a prepara para ser aceita.
 func (s *CorridaService) CriarNovaCorrida(corridaInput models.Corrida) (*models.Corrida, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -35,9 +34,6 @@ func (s *CorridaService) CriarNovaCorrida(corridaInput models.Corrida) (*models.
 	corrida.DataInicio = time.Now()
 
 	s.corridas[corrida.ID] = corrida
-
-	// Inicia a simulação em uma nova goroutine
-	go s.simularCorrida(corrida)
 
 	return corrida, nil
 }
@@ -54,46 +50,74 @@ func (s *CorridaService) GetCorridaPorID(id int) (*models.Corrida, error) {
 	return corrida, nil
 }
 
-// simularCorrida executa a lógica de simulação de uma corrida.
-func (s *CorridaService) simularCorrida(corrida *models.Corrida) {
-	// 1. Procurando motorista
-	fmt.Printf("Corrida %d: Procurando motorista...\n", corrida.ID)
-	time.Sleep(5 * time.Second) // Simula o tempo de busca
-
+// AceitarCorrida permite que um motorista aceite uma corrida.
+func (s *CorridaService) AceitarCorrida(corridaID int, motoristaID int) error {
 	s.mutex.Lock()
-	corrida.Status = models.StatusMotoristaEncontrado
-	corrida.MotoristaID = rand.Intn(100) + 1 // Atribui um ID de motorista aleatório
-	fmt.Printf("Corrida %d: Motorista %d encontrado. A caminho!\n", corrida.ID, corrida.MotoristaID)
-	s.mutex.Unlock()
+	defer s.mutex.Unlock()
 
-	// 2. Motorista a caminho
-	time.Sleep(5 * time.Second) // Simula o tempo de chegada do motorista
-
-	s.mutex.Lock()
-	corrida.Status = models.StatusCorridaIniciada
-	fmt.Printf("Corrida %d: Corrida iniciada.\n", corrida.ID)
-	s.mutex.Unlock()
-
-	// 3. Corrida em andamento
-	// Usaremos o tempo estimado em segundos para a simulação
-	tempoEstimadoSegundos := time.Duration(corrida.TempoEstimado) * time.Second
-	tempoInicioCorrida := time.Now()
-	
-	for time.Since(tempoInicioCorrida) < tempoEstimadoSegundos {
-		time.Sleep(1 * time.Second)
-		s.mutex.Lock()
-		corrida.TempoDecorrido = int(time.Since(tempoInicioCorrida).Seconds())
-		s.mutex.Unlock()
+	corrida, exists := s.corridas[corridaID]
+	if !exists {
+		return fmt.Errorf("corrida com ID %d não encontrada", corridaID)
 	}
 
+	if corrida.Status != models.StatusProcurandoMotorista {
+		return fmt.Errorf("corrida %d não está mais procurando por motorista", corridaID)
+	}
 
-	// 4. Finalizar a corrida
+	corrida.Status = models.StatusMotoristaEncontrado
+	corrida.MotoristaID = motoristaID
+	fmt.Printf("Corrida %d: Motorista %d aceitou a corrida.\n", corrida.ID, corrida.MotoristaID)
+
+	return nil
+}
+
+// AtualizarPosicao atualiza a localização do motorista para uma corrida específica.
+func (s *CorridaService) AtualizarPosicao(corridaID int, lat, lng float64) error {
 	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	corrida, exists := s.corridas[corridaID]
+	if !exists {
+		return fmt.Errorf("corrida com ID %d não encontrada", corridaID)
+	}
+
+	corrida.MotoristaLat = lat
+	corrida.MotoristaLng = lng
+	return nil
+}
+
+// CancelarCorrida cancela uma corrida que está em andamento.
+func (s *CorridaService) CancelarCorrida(corridaID int) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	corrida, exists := s.corridas[corridaID]
+	if !exists {
+		return fmt.Errorf("corrida com ID %d não encontrada", corridaID)
+	}
+
+	corrida.Status = models.StatusCanceladaPeloUsuario
 	now := time.Now()
-	corrida.DataFim = &now
-	corrida.TempoDecorrido = int(tempoEstimadoSegundos.Seconds())
-	// Lógica de bônus/status final pode ser adicionada aqui se necessário
-	corrida.Status = models.StatusConcluidaNoTempo
-	fmt.Printf("Corrida %d: Corrida finalizada.\n", corrida.ID)
-	s.mutex.Unlock()
+    corrida.DataFim = &now
+	fmt.Printf("Corrida %d: Cancelada pelo usuário.\n", corrida.ID)
+
+	return nil
+}
+
+// FinalizarCorrida finaliza uma corrida com sucesso.
+func (s *CorridaService) FinalizarCorrida(corridaID int) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	corrida, exists := s.corridas[corridaID]
+	if !exists {
+		return fmt.Errorf("corrida com ID %d não encontrada", corridaID)
+	}
+
+	corrida.Status = models.StatusConcluidaNoTempo // Ou outra lógica para determinar o status final
+	now := time.Now()
+    corrida.DataFim = &now
+	fmt.Printf("Corrida %d: Finalizada com sucesso.\n", corrida.ID)
+
+	return nil
 }

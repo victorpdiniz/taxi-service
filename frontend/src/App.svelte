@@ -6,5 +6,5 @@
 
 <Router>
   <Route path="/" component={Home} />
-  <Route path="/corrida" component={Corrida} />
+  <Route path="/corrida/:id" component={Corrida} />
 </Router>

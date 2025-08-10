@@ -12,12 +12,15 @@ const (
 	StatusConcluidaAntecedencia    = "concluída com antecedência"
 	StatusConcluidaNoTempo         = "concluída no tempo previsto"
 	StatusCanceladaPorExcessoTempo = "cancelada por excesso de tempo"
+	StatusCanceladaPeloUsuario     = "cancelada pelo usuário"
 )
 
 type Corrida struct {
 	ID             int
 	MotoristaID    int
 	PassageiroID   int
+	Origem         string
+	Destino        string
 	TempoEstimado  int // minutos
 	TempoDecorrido int // minutos
 	Preco          float64 // valor da corrida
@@ -25,4 +28,6 @@ type Corrida struct {
 	BonusAplicado  bool
 	DataInicio     time.Time
 	DataFim        *time.Time
+	MotoristaLat   float64
+	MotoristaLng   float64
 }
