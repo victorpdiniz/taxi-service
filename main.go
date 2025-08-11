@@ -2,7 +2,7 @@ package main
 
 import (
     "github.com/gofiber/fiber/v2"
-    "taxi-service/routes" // nome do módulo + pasta
+    "taxi-service/routes"
     "taxi-service/services"
 )
 
@@ -12,5 +12,5 @@ func main() {
 
 	app := fiber.New()
 	routes.SetupRoutes(app)
-	app.Listen(":8080")
+	app.Listen(":3000")
 }

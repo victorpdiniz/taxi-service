@@ -9,7 +9,7 @@ import (
 )
 
 // SetupAppRoutes inicializa todas as rotas da aplicação.
-func SetupAppRoutes(app *fiber.App) {
+func SetupRoutes(app *fiber.App) {
 	// Middlewares
 	app.Use(cors.New())
 	app.Use(logger.New())
