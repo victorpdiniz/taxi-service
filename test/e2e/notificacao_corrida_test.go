@@ -59,7 +59,7 @@ func TestCreateNotificacaoCorrida(t *testing.T) {
         PassageiroNome:  "Test Passenger",
         Valor:           45.50,
         DistanciaKm:     8.5,
-        TempoEstimado:   "15 min",
+        TempoEstimado:   15,
         Origem:          "Test Origin Address",
         Destino:         "Test Destination Address",
     }
@@ -159,7 +159,7 @@ func TestAceitarNotificacaoCorrida(t *testing.T) {
         PassageiroNome:  "Accept Test Passenger",
         Valor:           30.00,
         DistanciaKm:     5.0,
-        TempoEstimado:   "10 min",
+        TempoEstimado:   10,
         Origem:          "Accept Test Origin",
         Destino:         "Accept Test Destination",
     }
@@ -205,7 +205,7 @@ func TestRecusarNotificacaoCorrida(t *testing.T) {
         PassageiroNome:  "Refuse Test Passenger",
         Valor:           25.00,
         DistanciaKm:     4.0,
-        TempoEstimado:   "8 min",
+        TempoEstimado:   8,
         Origem:          "Refuse Test Origin",
         Destino:         "Refuse Test Destination",
     }
@@ -255,7 +255,7 @@ func TestExpirarNotificacoesVencidas(t *testing.T) {
         PassageiroNome:  "Expire Test Passenger",
         Valor:           25.00,
         DistanciaKm:     4.0,
-        TempoEstimado:   "8 min",
+        TempoEstimado:   8,
         Origem:          "Test Origin",
         Destino:         "Test Destination",
     }
@@ -323,7 +323,7 @@ func TestDeleteNotificacaoCorrida(t *testing.T) {
         PassageiroNome:  "Delete Test Passenger",
         Valor:           20.00,
         DistanciaKm:     3.0,
-        TempoEstimado:   "7 min",
+        TempoEstimado:   7,
         Origem:          "Delete Test Origin",
         Destino:         "Delete Test Destination",
     }
@@ -370,7 +370,7 @@ func TestNotificacaoCorridaWorkflow(t *testing.T) {
         PassageiroNome:  "Workflow Test Passenger",
         Valor:           35.75,
         DistanciaKm:     7.2,
-        TempoEstimado:   "16 min",
+        TempoEstimado:   16,
         Origem:          "Workflow Test Origin",
         Destino:         "Workflow Test Destination",
     }

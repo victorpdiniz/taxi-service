@@ -5,7 +5,6 @@ import (
 	"strings"
 	"taxi-service/models"
 	"taxi-service/services"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -92,37 +91,6 @@ func CreateNotificacaoCorrida(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(notificacao)
-}
-
-// GetNotificacoesPendentesParaMotorista - Busca notificações pendentes para um motorista específico
-func GetNotificacoesPendentesParaMotorista(c *fiber.Ctx) error {
-	motoristaIDParam := c.Params("motoristaID")
-
-	if motoristaIDParam == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "MotoristaID is required",
-		})
-	}
-
-	motoristaID, err := strconv.ParseUint(motoristaIDParam, 10, 32)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid MotoristaID format",
-		})
-	}
-
-	notificacoes, err := services.GetNotificacoesPendentesParaMotorista(uint(motoristaID))
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to fetch pending notificacoes",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"motorista_id":         motoristaID,
-		"pending_count":        len(notificacoes),
-		"pending_notificacoes": notificacoes,
-	})
 }
 
 // AceitarNotificacaoCorrida - Aceita uma notificação de corrida
@@ -225,110 +193,6 @@ func RecusarNotificacaoCorrida(c *fiber.Ctx) error {
 		"message":        "Notificacao refused successfully",
 		"notificacao_id": nID,
 		"motorista_id":   mID,
-	})
-}
-
-// ExpirarNotificacoesVencidas - Marca como expiradas as notificações que passaram do tempo limite
-func ExpirarNotificacoesVencidas(c *fiber.Ctx) error {
-	err := services.ExpirarNotificacoesVencidas()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to expire notificacoes",
-		})
-	}
-
-	return c.JSON(fiber.Map{
-		"message":      "Expired notificacoes processed successfully",
-		"processed_at": time.Now(),
-	})
-}
-
-// GetHistoricoNotificacoesMotorista - Busca histórico de notificações de um motorista
-func GetHistoricoNotificacoesMotorista(c *fiber.Ctx) error {
-	motoristaIDParam := c.Params("motoristaID")
-
-	if motoristaIDParam == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "MotoristaID is required",
-		})
-	}
-
-	motoristaID, err := strconv.ParseUint(motoristaIDParam, 10, 32)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid MotoristaID format",
-		})
-	}
-
-	historico, err := services.GetHistoricoNotificacoesMotorista(uint(motoristaID))
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to fetch historico",
-		})
-	}
-
-	// Organizar histórico por status
-	aceitas := 0
-	recusadas := 0
-	expiradas := 0
-	pendentes := 0
-
-	for _, notif := range historico {
-		switch notif.Status {
-		case models.NotificacaoAceita:
-			aceitas++
-		case models.NotificacaoRecusada:
-			recusadas++
-		case models.NotificacaoExpirada:
-			expiradas++
-		case models.NotificacaoPendente:
-			pendentes++
-		}
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"motorista_id":    motoristaID,
-		"total_count":     len(historico),
-		"aceitas_count":   aceitas,
-		"recusadas_count": recusadas,
-		"expiradas_count": expiradas,
-		"pendentes_count": pendentes,
-		"historico":       historico,
-	})
-}
-
-// DeleteNotificacaoCorrida - Remove uma notificação (para limpeza de dados antigos)
-func DeleteNotificacaoCorrida(c *fiber.Ctx) error {
-	id := c.Params("id")
-
-	if id == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID",
-		})
-	}
-
-	notificacaoID, err := strconv.ParseUint(id, 10, 32)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID format",
-		})
-	}
-
-	err = services.DeleteNotificacaoCorrida(uint(notificacaoID))
-	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "Notificacao not found",
-			})
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to delete notificacao",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Notificacao deleted successfully",
-		"id":      notificacaoID,
 	})
 }
 

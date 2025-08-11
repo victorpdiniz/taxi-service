@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "nome": "João Silva",
+    "lat": -23.5505,
+    "lng": -46.6333,
+    "status": "disponivel",
+    "avaliacao": 4.8
+  },
+  {
+    "id": 2,
+    "nome": "Maria Santos",
+    "lat": -23.5515,
+    "lng": -46.6343,
+    "status": "disponivel",
+    "avaliacao": 4.9
+  },
+  {
+    "id": 3,
+    "nome": "Pedro Costa",
+    "lat": -23.5525,
+    "lng": -46.6353,
+    "status": "disponivel",
+    "avaliacao": 4.7
+  },
+  {
+    "id": 4,
+    "nome": "Ana Oliveira",
+    "lat": -23.5535,
+    "lng": -46.6363,
+    "status": "disponivel",
+    "avaliacao": 4.6
+  },
+  {
+    "id": 5,
+    "nome": "Carlos Pereira",
+    "lat": -23.5545,
+    "lng": -46.6373,
+    "status": "ocupado",
+    "avaliacao": 4.9
+  }
+]
