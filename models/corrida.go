@@ -28,6 +28,7 @@ type Corrida struct {
 	BonusAplicado  bool
 	DataInicio     time.Time
 	DataFim        *time.Time
+	Avaliacao	   *int
 	MotoristaLat   float64
 	MotoristaLng   float64
 }

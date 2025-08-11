@@ -1,11 +1,22 @@
 package services
 
 import (
+	"taxi_service/models"
+	"time"
+
+	"errors"
+
+	"encoding/json"
+	"os"
+	"log"
+
 	"fmt"
 	"sync"
-	"time"
-	"your-app/models"
 )
+
+var corridas []models.Corrida 
+
+
 
 // CorridaService gerencia a lógica de negócio das corridas.
 type CorridaService struct {
@@ -173,4 +184,36 @@ func (s *CorridaService) MonitorarCorridasAtivas() {
 		}
 		s.mutex.Unlock()
 	}
+}
+
+func AvaliarCorrida(id int, nota int) error {
+    for i := range corridas {
+        if corridas[i].ID == id {
+            corridas[i].Avaliacao = &nota
+            return nil
+        }
+    }
+    return errors.New("corrida não encontrada")
+}
+
+func (s *CorridaService) AdicionarCorrida(corrida models.Corrida) {
+	corridas = append(corridas, corrida)
+}
+
+func CarregarCorridasDoArquivo() {
+	file, err := os.Open("data/corridas.json")
+	if err != nil {
+		log.Println("Erro ao abrir arquivo JSON de corridas:", err)
+		return
+	}
+	defer file.Close()
+
+	err = json.NewDecoder(file).Decode(&corridas)
+	if err != nil {
+		log.Println("Erro ao fazer parse do JSON:", err)
+	}
+}
+
+func GetCorridas() []models.Corrida {
+	return corridas
 }

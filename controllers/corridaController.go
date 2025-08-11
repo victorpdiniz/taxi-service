@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"strconv"
-	"your-app/models"
-	"your-app/services"
+	"taxi_service/models"
+	"taxi_service/services"
 
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 )
 
 // CorridaController gerencia as requisições HTTP para corridas.
@@ -33,6 +33,8 @@ func (cc *CorridaController) CriarCorrida(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	cc.service.AdicionarCorrida(corridaInput)
 
 	return c.Status(fiber.StatusCreated).JSON(corrida)
 }
@@ -130,4 +132,33 @@ func (cc *CorridaController) FinalizarCorrida(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusOK)
+}
+
+func (cc *CorridaController) AvaliarCorrida(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID inválido"})
+	}
+
+	var input struct {
+		Nota int `json:"nota"`
+	}
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "JSON inválido"})
+	}
+
+	if err := services.AvaliarCorrida(id, input.Nota); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "avaliado"})
+}
+
+func (cc *CorridaController) ListarCorridas(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON(services.GetCorridas())
+}
+
+func (cc *CorridaController) Service() *services.CorridaService {
+	return cc.service
 }
