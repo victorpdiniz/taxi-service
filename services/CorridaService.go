@@ -4,22 +4,19 @@ import (
 	"taxi_service/models"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-
 	"errors"
 
 	"encoding/json"
 	"os"
 	"log"
-)
-
-var corridas []models.Corrida
 
 	"fmt"
 	"sync"
-	"time"
-	"your-app/models"
 )
+
+var corridas []models.Corrida 
+
+
 
 // CorridaService gerencia a lógica de negócio das corridas.
 type CorridaService struct {

@@ -29,7 +29,6 @@ type Corrida struct {
 	DataInicio     time.Time
 	DataFim        *time.Time
 	Avaliacao	   *int
-	Destino		   string
 	MotoristaLat   float64
 	MotoristaLng   float64
 }

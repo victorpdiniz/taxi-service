@@ -34,6 +34,8 @@ func (cc *CorridaController) CriarCorrida(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	cc.service.AdicionarCorrida(corridaInput)
+
 	return c.Status(fiber.StatusCreated).JSON(corrida)
 }
 
@@ -151,21 +153,6 @@ func (cc *CorridaController) AvaliarCorrida(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "avaliado"})
-}
-
-func (cc *CorridaController) CriarCorrida(c *fiber.Ctx) error {
-	var corrida models.Corrida
-
-	if err := c.BodyParser(&corrida); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "JSON inválido",
-		})
-	}
-
-	// Salva na slice em memória
-	cc.service.AdicionarCorrida(corrida)
-
-	return c.Status(fiber.StatusCreated).JSON(corrida)
 }
 
 func (cc *CorridaController) ListarCorridas(c *fiber.Ctx) error {

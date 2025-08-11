@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"your-app/controllers"
-	"your-app/services"
+	"taxi_service/controllers"
+	"taxi_service/services"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,9 +20,9 @@ func SetupCorridaRoutes(api fiber.Router, corridaService *services.CorridaServic
 	corridaGroup.Post("/:id/cancelar", corridaController.CancelarCorrida) // Nova rota
 	corridaGroup.Post("/:id/finalizar", corridaController.FinalizarCorrida) // Nova rota
 
-	app.Post("/corridas/:id/avaliar", corridaController.AvaliarCorrida)
-	app.Post("/corridas", corridaController.CriarCorrida)
-	app.Get("/corridas", corridaController.ListarCorridas)
+	api.Post("/corridas/:id/avaliar", corridaController.AvaliarCorrida)
+	api.Post("/corridas", corridaController.CriarCorrida)
+	api.Get("/corridas", corridaController.ListarCorridas)
 
 	// Manter a rota OPTIONS para o CORS
 	corridaGroup.Options("/monitorar", func(c *fiber.Ctx) error {
