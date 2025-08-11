@@ -1,28 +1,34 @@
 Feature: Tempo de Corrida
+As a sistema de monitoramento de corridas
+I want to acompanhar o tempo de execução de uma corrida
+So that eu possa reagir de forma adequada a atrasos ou adiantamentos
 
-Scenario 1: O motorista extrapolou o tempo de espera
-  Given que o tempo de espera superou o tempo estimado
-  When o sistema detecta que o tempo limite foi ultrapassado
-  Then uma notificação deve ser enviada para o usuário
-  And o status do motorista deve ser atualizado para "atrasado"
-  And é plotado na tela do motorista uma tag de "atrasado"
+Scenario: Notificar atraso do motorista após tempo limite
+Given o tempo estimado de chegada ao destino é de "20" minutos
+And o tempo decorrido é de "25" minutos
+When o sistema detecta que o tempo foi ultrapassado
+Then uma notificação é enviada para o passageiro
+And o status do motorista é atualizado para "atrasado"
+And é exibida a tag "atrasado" na tela do motorista
 
-Scenario 2: O motorista chegou antes do tempo estimado
-  Given que o motorista iniciou a corrida
-  And chegou ao destino antes do tempo estimado
-  When o sistema calcula o tempo total percorrido
-  Then o status da corrida deve ser "concluída com antecedência"
-  And uma mensagem de parabéns pode ser exibida ao motorista
-  And um bônus pode ser aplicado
+Scenario: Motorista conclui corrida antes do tempo estimado
+Given o tempo estimado de chegada ao destino é de "20" minutos
+And o tempo decorrido é de "15" minutos
+When o motorista chega ao destino
+Then o status da corrida é "concluída com antecedência"
+And uma mensagem de parabéns é exibida ao motorista
+And um bônus é aplicado ao motorista
 
-Scenario 3: O motorista chegou dentro do tempo estimado
-  Given que o tempo decorrido está dentro da margem do tempo estimado
-  When o motorista chega ao destino
-  Then o status da corrida deve ser "concluída no tempo previsto"
-  And nenhuma penalização ou bônus deve ser aplicado
+Scenario: Motorista conclui corrida dentro do tempo estimado
+Given o tempo estimado de chegada ao destino é de "20" minutos
+And o tempo decorrido é de "19" minutos
+When o motorista chega ao destino
+Then o status da corrida é "concluída no tempo previsto"
+And nenhuma penalização ou bônus é aplicado
 
-Scenario 4: Corrida cancelada por excesso de tempo
-  Given que o tempo estimado foi ultrapassado em mais de 15 minutos
-  When o sistema detecta a demora excessiva
-  Then a corrida deve ser automaticamente cancelada
-  And uma notificação de cancelamento deve ser enviada ao motorista por um pop-up
+Scenario: Corrida cancelada automaticamente por excesso de tempo
+Given o tempo estimado de chegada é de "20" minutos
+And o tempo decorrido é de "36" minutos
+When o sistema detecta que o tempo ultrapassou o limite de "15" minutos extras
+Then a corrida é automaticamente cancelada
+And o motorista recebe uma notificação por pop-up com a mensagem "Corrida cancelada por excesso de tempo"

@@ -1,18 +1,32 @@
 package routes
 
 import (
+	"your-app/services"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
+// SetupRoutes inicializa todas as rotas da aplicação.
 func SetupRoutes(app *fiber.App) {
-	api := app.Group("/", logger.New())
+	// Middlewares
+	app.Use(cors.New())
+	app.Use(logger.New())
 
+	// Crie uma instância do serviço de corrida
+	corridaService := services.NewCorridaService()
+
+	// Grupo de rotas da API
+	api := app.Group("/api")
+
+	// Rota de Health Check
 	api.Get("/health", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "OK"})
 	})
 
-	SetupDummyRoutes(api)
-	SetupMotoristaRoutes(api)
-	SetupRegisterCorridaRoutes(api)
+	// Configura as rotas de corrida, passando o serviço
+	SetupCorridaRoutes(api, corridaService)
+
+	// DummyRoutes(api) // Comentado para focar na funcionalidade principal
 }
