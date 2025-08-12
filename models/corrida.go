@@ -33,7 +33,7 @@ type Corrida struct {
 	Tempo            int        `json:"tempo"`            // tempo para chegar ao destino
 	TempoEstimado    int        `json:"tempoEstimado"`    // tempo estimado em minutos
 	TempoDecorrido   int        `json:"tempoDecorrido"`   // tempo decorrido em minutos
-	Valor            int        `json:"valor"`            // valor da corrida (original)
+	Valor            float64    `json:"valor"`            // valor da corrida (original)
 	Preco            float64    `json:"preco"`            // valor da corrida (float64)
 	Avaliacao        *int       `json:"avaliacao"`        // avaliacao 1, 2, 3, 4, 5 ou nil
 	Status           string     `json:"status"`           // status da corrida
@@ -48,4 +48,5 @@ type Corrida struct {
 	DataFim          *time.Time `json:"dataFim"`          // data/hora de fim (pode ser nil)
 	MotoristaLat     float64    `json:"motoristaLat"`     // latitude do motorista
 	MotoristaLng     float64    `json:"motoristaLng"`     // longitude do motorista
+	DistanciaKm    *float64   `json:"distanciaKm"`      // distância em km (pode ser nil)
 }

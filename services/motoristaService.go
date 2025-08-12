@@ -6,9 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
 	"github.com/google/uuid"
-
 	"taxi-service/models"
 	"taxi-service/repositories"
 )

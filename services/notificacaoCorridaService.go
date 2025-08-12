@@ -114,9 +114,9 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
         return err
     }
 
-    // Iniciar rotina para expiração automática após 21 segundos
+    // Iniciar rotina para expiração automática após 20 segundos
     go func(id uint) {
-        time.Sleep(21 * time.Second) // 20s + 1s de margem
+        time.Sleep(20 * time.Second) // 20ss
 
         // Ler novamente as notificações
         notificacoes, err := readNotificacoesCorrida()
