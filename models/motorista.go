@@ -43,7 +43,7 @@ const (
 // Motorista representa um motorista no sistema
 type Motorista struct {
     gorm.Model
-    ID             string            `json:"id"`
+    ID             string          `json:"id"`
     Nome           string          `json:"nome" validate:"required,min=2,max=100"`
     DataNascimento time.Time       `json:"data_nascimento" validate:"required"`
     CPF            string          `json:"cpf" validate:"required"`
