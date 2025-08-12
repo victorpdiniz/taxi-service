@@ -201,7 +201,7 @@ func (s *CorridaService) AdicionarCorrida(corrida models.Corrida) {
 }
 
 func CarregarCorridasDoArquivo() {
-	file, err := os.Open("data/corridas.json")
+	file, err := os.Open("../data/corridas.json")
 	if err != nil {
 		log.Println("Erro ao abrir arquivo JSON de corridas:", err)
 		return
