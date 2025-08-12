@@ -12,12 +12,12 @@ func SetupCorridaRoutes(api fiber.Router, corridaService *services.CorridaServic
 
 	corridaGroup := api.Group("/corrida")
 	corridaGroup.Post("/", corridaController.CriarCorrida)
-	corridaGroup.Get("/:id", corridaController.GetCorrida) // Nova rota
+	corridaGroup.Get("/:id", corridaController.GetCorrida)
 	corridaGroup.Post("/monitorar", corridaController.MonitorarCorrida)
 	corridaGroup.Put("/:id/aceitar", corridaController.AceitarCorrida)
 	corridaGroup.Put("/:id/posicao", corridaController.AtualizarPosicao)
-	corridaGroup.Post("/:id/cancelar", corridaController.CancelarCorrida) // Nova rota
-	corridaGroup.Post("/:id/finalizar", corridaController.FinalizarCorrida) // Nova rota
+	corridaGroup.Post("/:id/cancelar", corridaController.CancelarCorrida)
+	corridaGroup.Post("/:id/finalizar", corridaController.FinalizarCorrida)
 
 	api.Post("/corridas/:id/avaliar", corridaController.AvaliarCorrida)
 	api.Post("/corridas", corridaController.CriarCorrida)
