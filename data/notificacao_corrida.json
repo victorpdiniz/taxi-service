@@ -223,5 +223,50 @@
     "created_at": "2025-01-22T15:10:00Z",
     "updated_at": "2025-01-22T15:10:14Z",
     "expira_em": "2025-01-22T15:10:20Z"
+  },
+  {
+    "id": 16,
+    "motorista_id": 101,
+    "corrida_id": 1001,
+    "passageiro_nome": "Maria Silva",
+    "valor": 25.5,
+    "distancia_km": 5.2,
+    "tempo_estimado": "12 min",
+    "origem": "-23.5505, -46.6333",
+    "destino": "-23.5550, -46.6400",
+    "status": "aceita",
+    "created_at": "2025-08-12T10:49:51.326988382-03:00",
+    "updated_at": "2025-08-12T10:50:01.669963438-03:00",
+    "expira_em": "2025-08-12T10:50:11.326988382-03:00"
+  },
+  {
+    "id": 17,
+    "motorista_id": 102,
+    "corrida_id": 1002,
+    "passageiro_nome": "João Santos",
+    "valor": 42.8,
+    "distancia_km": 8.7,
+    "tempo_estimado": "18 min",
+    "origem": "-23.5600, -46.6450",
+    "destino": "-23.5350, -46.6200",
+    "status": "expirada",
+    "created_at": "2025-08-12T10:50:17.794074769-03:00",
+    "updated_at": "2025-08-12T10:50:39.336643416-03:00",
+    "expira_em": "2025-08-12T10:50:37.794074769-03:00"
+  },
+  {
+    "id": 18,
+    "motorista_id": 102,
+    "corrida_id": 1002,
+    "passageiro_nome": "João Santos",
+    "valor": 42.8,
+    "distancia_km": 8.7,
+    "tempo_estimado": "18 min",
+    "origem": "-23.5600, -46.6450",
+    "destino": "-23.5350, -46.6200",
+    "status": "expirada",
+    "created_at": "2025-08-12T10:50:53.14005771-03:00",
+    "updated_at": "2025-08-12T10:51:14.142352175-03:00",
+    "expira_em": "2025-08-12T10:51:13.14005771-03:00"
   }
 ]
