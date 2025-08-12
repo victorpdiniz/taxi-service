@@ -18,15 +18,9 @@ func NotificacaoCorridaRoutes(api fiber.Router) {
     // POST /notificacoes - Cria nova notificação
     notificacoes.Post("/", controllers.CreateNotificacaoCorrida)
     
-    // DELETE /notificacoes/:id - Remove notificação
-    notificacoes.Delete("/:id", controllers.DeleteNotificacaoCorrida)
-
     // ============= ROTAS ESPECÍFICAS DE MOTORISTA =============
     // GET /notificacoes/motorista/:motoristaID/pending - Notificações pendentes do motorista
     notificacoes.Get("/motorista/:motoristaID/pending", controllers.GetNotificacoesPendentesParaMotorista)
-    
-    // GET /notificacoes/motorista/:motoristaID/historico - Histórico do motorista
-    notificacoes.Get("/motorista/:motoristaID/historico", controllers.GetHistoricoNotificacoesMotorista)
 
     // ============= ROTAS DE AÇÕES =============
     // POST /notificacoes/:id/motorista/:motoristaID/accept - Aceitar notificação

@@ -61,6 +61,8 @@ type Motorista struct {
     CriadoEm       time.Time       `json:"criado_em"`
     AtualizadoEm   time.Time       `json:"atualizado_em"`
     Documentos     []Documento     `json:"documentos"`
+    Latitude      float64         `json:"latitude"`
+    Longitude     float64         `json:"longitude"`
 }
 
 // Documento representa um documento enviado pelo motorista
