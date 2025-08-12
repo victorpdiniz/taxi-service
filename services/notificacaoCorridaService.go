@@ -14,7 +14,6 @@ const notificacaoCorridaFile = "./data/notificacao_corrida.json"
 // ============= FUNÇÕES AUXILIARES DE ARQUIVO =============
 
 func readNotificacoesCorrida() ([]models.NotificacaoCorrida, error) {
-    
     // Criar diretório se não existir
     dataDir := filepath.Dir(notificacaoCorridaFile)
     if err := os.MkdirAll(dataDir, 0755); err != nil {
@@ -35,28 +34,27 @@ func readNotificacoesCorrida() ([]models.NotificacaoCorrida, error) {
     if err != nil {
         return nil, err
     }
-    
+
     return notificacoes, nil
 }
 
 func writeNotificacoesCorrida(notificacoes []models.NotificacaoCorrida) error {
-    
     // Garantir que o diretório existe antes de escrever
     dataDir := filepath.Dir(notificacaoCorridaFile)
     if err := os.MkdirAll(dataDir, 0755); err != nil {
         return err
     }
-    
+
     data, err := json.MarshalIndent(notificacoes, "", "  ")
     if err != nil {
         return err
     }
-    
+
     err = os.WriteFile(notificacaoCorridaFile, data, 0644)
     if err != nil {
         return err
     }
-    
+
     return nil
 }
 
@@ -69,23 +67,23 @@ func ListNotificacoesCorrida() ([]models.NotificacaoCorrida, error) {
 
 // GetNotificacaoCorrida - Busca notificação por ID
 func GetNotificacaoCorrida(id uint) (models.NotificacaoCorrida, error) {
-    
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return models.NotificacaoCorrida{}, err
     }
-    
+
     for _, notificacao := range notificacoes {
         if notificacao.ID == id {
             return notificacao, nil
         }
     }
-    
+
     return models.NotificacaoCorrida{}, errors.New("notificacao not found")
 }
 
 // CreateNotificacaoCorrida - Cria nova notificação para motorista
 func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
+    // Ler notificações existentes
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return err
@@ -110,6 +108,7 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
     // Adicionar nova notificação à lista
     notificacoes = append(notificacoes, *notificacao)
 
+    // Salvar no arquivo
     if err := writeNotificacoesCorrida(notificacoes); err != nil {
         return err
     }
@@ -121,7 +120,6 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
         // Ler novamente as notificações
         notificacoes, err := readNotificacoesCorrida()
         if err != nil {
-            // Idealmente logar erro, mas estamos em goroutine
             return
         }
 
@@ -137,7 +135,7 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
         }
 
         if updated {
-            _ = writeNotificacoesCorrida(notificacoes) // Ignorar erro por simplicidade
+            writeNotificacoesCorrida(notificacoes)
         }
     }(notificacao.ID)
 
@@ -146,44 +144,41 @@ func CreateNotificacaoCorrida(notificacao *models.NotificacaoCorrida) error {
 
 // GetNotificacoesPendentesParaMotorista - Busca notificações pendentes para um motorista específico
 func GetNotificacoesPendentesParaMotorista(motoristaID uint) ([]models.NotificacaoCorrida, error) {
-    
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return nil, err
     }
-    
+
     var notificacoesPendentes []models.NotificacaoCorrida
     agora := time.Now()
-    
+
     for _, notificacao := range notificacoes {
         // Verificar se é para o motorista e está pendente
         if notificacao.MotoristaID == motoristaID && notificacao.Status == models.NotificacaoPendente {
             // Verificar se não expirou
             if agora.Before(notificacao.ExpiraEm) {
                 notificacoesPendentes = append(notificacoesPendentes, notificacao)
-            } else {
             }
         }
     }
-    
+
     return notificacoesPendentes, nil
 }
 
 // AceitarNotificacaoCorrida - Aceita uma notificação de corrida
 func AceitarNotificacaoCorrida(notificacaoID uint, motoristaID uint) error {
-    
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return err
     }
-    
+
     for i, notificacao := range notificacoes {
         if notificacao.ID == notificacaoID && notificacao.MotoristaID == motoristaID {
             // Verificar se ainda está pendente e não expirou
             if notificacao.Status != models.NotificacaoPendente {
                 return errors.New("notificacao already processed")
             }
-            
+
             if time.Now().After(notificacao.ExpiraEm) {
                 // Marcar como expirada
                 notificacoes[i].Status = models.NotificacaoExpirada
@@ -191,63 +186,69 @@ func AceitarNotificacaoCorrida(notificacaoID uint, motoristaID uint) error {
                 writeNotificacoesCorrida(notificacoes)
                 return errors.New("notificacao expired")
             }
-            
+
             // Aceitar a notificação
             notificacoes[i].Status = models.NotificacaoAceita
             notificacoes[i].UpdatedAt = time.Now()
-            
+
             if err := writeNotificacoesCorrida(notificacoes); err != nil {
                 return err
             }
-            
+
             return nil
         }
     }
-    
+
     return errors.New("notificacao not found")
 }
 
 // RecusarNotificacaoCorrida - Recusa uma notificação de corrida
 func RecusarNotificacaoCorrida(notificacaoID uint, motoristaID uint) error {
-    
+    // Ler notificações
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return err
     }
-    
+
+    // Buscar a notificação
     for i, notificacao := range notificacoes {
-        if notificacao.ID == notificacaoID && notificacao.MotoristaID == motoristaID {
+        if notificacao.ID == notificacaoID {
+            // Verificar se pertence ao motorista
+            if notificacao.MotoristaID != motoristaID {
+                return errors.New("notificacao does not belong to this motorista")
+            }
+
             // Verificar se ainda está pendente
             if notificacao.Status != models.NotificacaoPendente {
                 return errors.New("notificacao already processed")
             }
-            
+
             // Recusar a notificação
             notificacoes[i].Status = models.NotificacaoRecusada
             notificacoes[i].UpdatedAt = time.Now()
-            
+
+            // Salvar alterações
             if err := writeNotificacoesCorrida(notificacoes); err != nil {
                 return err
             }
-            
+
             return nil
         }
     }
-    
+
     return errors.New("notificacao not found")
 }
 
 // ExpirarNotificacoesVencidas - Marca como expiradas as notificações que passaram do tempo limite
 func ExpirarNotificacoesVencidas() error {
-    
     notificacoes, err := readNotificacoesCorrida()
     if err != nil {
         return err
     }
-    
+
     agora := time.Now()
     expiradas := 0
-    
+
     for i, notificacao := range notificacoes {
         if notificacao.Status == models.NotificacaoPendente && agora.After(notificacao.ExpiraEm) {
             notificacoes[i].Status = models.NotificacaoExpirada
@@ -255,13 +256,12 @@ func ExpirarNotificacoesVencidas() error {
             expiradas++
         }
     }
-    
+
     if expiradas > 0 {
         if err := writeNotificacoesCorrida(notificacoes); err != nil {
             return err
         }
-    } else {
     }
-    
+
     return nil
 }

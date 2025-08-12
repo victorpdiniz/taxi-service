@@ -21,7 +21,7 @@ func NotificacaoCorridaRoutes(api fiber.Router) {
     // ============= ROTAS ESPECÍFICAS DE MOTORISTA =============
     // GET /notificacoes/motorista/:motoristaID/pending - Notificações pendentes do motorista
     notificacoes.Get("/motorista/:motoristaID/pending", controllers.GetNotificacoesPendentesParaMotorista)
-
+    
     // ============= ROTAS DE AÇÕES =============
     // POST /notificacoes/:id/motorista/:motoristaID/accept - Aceitar notificação
     notificacoes.Post("/:id/motorista/:motoristaID/accept", controllers.AceitarNotificacaoCorrida)
@@ -32,7 +32,4 @@ func NotificacaoCorridaRoutes(api fiber.Router) {
     // ============= ROTAS ADMINISTRATIVAS =============
     // POST /notificacoes/expire - Expirar notificações vencidas
     notificacoes.Post("/expire", controllers.ExpirarNotificacoesVencidas)
-    
-    // PUT /notificacoes/:id/status - Atualizar status (auxiliar)
-    notificacoes.Put("/:id/status", controllers.UpdateNotificacaoStatus)
 }
