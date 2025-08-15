@@ -3,13 +3,10 @@ package services
 import (
 	"taxi-service/models"
 	"time"
-
 	"errors"
-
 	"encoding/json"
 	"os"
 	"log"
-
 	"fmt"
 	"sync"
 )

@@ -20,7 +20,7 @@ type NotificacaoCorrida struct {
     PassageiroNome  string            `json:"passageiro_nome"`
     Valor           float64           `json:"valor"`
     DistanciaKm     float64           `json:"distancia_km"`
-    TempoEstimado   string            `json:"tempo_estimado"`
+    TempoEstimado   int            `json:"tempo_estimado"`
     Origem          string            `json:"origem"`
     Destino         string            `json:"destino"`
     Status          NotificacaoStatus `json:"status"`
